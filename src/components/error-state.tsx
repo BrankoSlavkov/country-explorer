@@ -1,0 +1,62 @@
+import { Link } from "@tanstack/react-router";
+import { HTTPError } from "ky";
+import type { ValueOf } from "~/types";
+
+export const ERROR_VARIANT = {
+  NOT_FOUND: "not-found",
+  GENERIC: "generic",
+} as const;
+
+export type ErrorVariant = ValueOf<typeof ERROR_VARIANT>;
+
+const ERROR_VARIANTS: Record<ErrorVariant, { icon: string; title: string }> = {
+  [ERROR_VARIANT.NOT_FOUND]: {
+    icon: "🌍",
+    title: "Country Not Found",
+  },
+  [ERROR_VARIANT.GENERIC]: {
+    icon: "⚠️",
+    title: "Something Went Wrong",
+  },
+};
+
+interface ErrorStateProps {
+  message: string;
+  variant?: ErrorVariant;
+}
+
+export function ErrorState({
+  message,
+  variant = ERROR_VARIANT.GENERIC,
+}: ErrorStateProps) {
+  const { icon, title } = ERROR_VARIANTS[variant];
+
+  return (
+    <div
+      className="flex items-center justify-center min-h-screen p-4"
+      style={{
+        backgroundImage:
+          "radial-gradient(50% 50% at 50% 50%, #1a1a2e 0%, #0d0d1a 100%)",
+      }}
+    >
+      <div className="text-center max-w-md">
+        <div className="text-8xl mb-6">{icon}</div>
+        <h1 className="text-4xl font-bold text-white mb-4">{title}</h1>
+        <p className="text-white/70 text-lg mb-8">{message}</p>
+        <Link
+          to="/"
+          className="inline-block px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 transition-colors"
+        >
+          Go Home
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export function getErrorVariant(error: Error | null): ErrorVariant {
+  if (error instanceof HTTPError && error.response.status === 404) {
+    return ERROR_VARIANT.NOT_FOUND;
+  }
+  return ERROR_VARIANT.GENERIC;
+}

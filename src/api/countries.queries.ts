@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { countriesApi } from "./client";
+import { countriesApi } from "~/api/client";
 
 interface CountryName {
   common: string;
@@ -9,6 +9,7 @@ interface CountryName {
 
 export interface Country {
   name: CountryName;
+  cca3: string;
   capital?: string[];
   region: string;
   subregion?: string;
@@ -43,6 +44,7 @@ export const countryQueries = {
         { ...countryQueries.all().queryKey[0], scope: "detail", name },
       ] as const,
       queryFn: () => countriesApi.get(`name/${name}`).json<Country[]>(),
+      select: (data) => data[0],
       enabled: !!name,
     }),
 };
