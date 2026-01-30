@@ -1,6 +1,6 @@
 {
   "name": "country-explorer",
-  "private": true,
+  "private": false,
   "type": "module",
   "scripts": {
     "dev": "vite",
