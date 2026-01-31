@@ -10,6 +10,7 @@ import { CountryMapSection } from "~/components/country-map-section";
 import { ErrorState } from "~/components/error-state";
 import { InfoCard } from "~/components/info-card";
 import { InfoItem } from "~/components/info-item";
+import { formatStatistic } from "~/lib/format";
 
 interface CountryDetailsProps {
   countryName: Country["name"]["common"];
@@ -33,10 +34,8 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Hero Section with Flag and Map */}
       <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 overflow-hidden">
         <div className="flex flex-col lg:flex-row">
-          {/* Flag */}
           <div className="flex-1 flex items-center justify-center p-8 bg-white/5">
             <img
               src={country.flags.svg}
@@ -45,7 +44,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
             />
           </div>
 
-          {/* Map */}
           <div className="flex-1 flex items-center justify-center p-8 border-t lg:border-t-0 lg:border-l border-white/10">
             <Suspense
               fallback={
@@ -57,7 +55,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           </div>
         </div>
 
-        {/* Name Section */}
         <div className="p-6 border-t border-white/10">
           <div className="flex items-center gap-4">
             <span className="text-5xl">{country.flag}</span>
@@ -69,9 +66,7 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
         </div>
       </div>
 
-      {/* Info Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* General Information */}
         <InfoCard title="General Information" icon="🌐">
           <InfoItem
             label="Capital"
@@ -86,15 +81,14 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           <InfoItem label="UN Member" value={country.unMember ? "Yes" : "No"} />
         </InfoCard>
 
-        {/* Demographics */}
         <InfoCard title="Demographics" icon="👥">
           <InfoItem
             label="Population"
-            value={country.population.toLocaleString()}
+            value={formatStatistic(country.population)}
           />
           <InfoItem
             label="Area"
-            value={`${country.area.toLocaleString()} km²`}
+            value={`${formatStatistic(country.area)} km²`}
           />
           <InfoItem
             label="Population Density"
@@ -113,7 +107,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           )}
         </InfoCard>
 
-        {/* Geography */}
         <InfoCard title="Geography" icon="📍">
           <div className="flex items-center gap-4 mb-3">
             <div>
@@ -170,9 +163,7 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           )}
         </InfoCard>
 
-        {/* Languages, Currencies & Calling Codes */}
         <InfoCard title="Languages & Currency" icon="🗣️">
-          {/* Languages */}
           {country.languages && (
             <div className="mb-4">
               <p className="text-white/50 text-xs mb-2">Languages</p>
@@ -189,7 +180,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
             </div>
           )}
 
-          {/* Currencies */}
           {country.currencies && (
             <div className="mb-4">
               <p className="text-white/50 text-xs mb-2">Currencies</p>
@@ -203,7 +193,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
             </div>
           )}
 
-          {/* Calling Codes */}
           {country.idd.root && (
             <div>
               <p className="text-white/50 text-xs mb-2">Calling Codes</p>
@@ -226,7 +215,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           )}
         </InfoCard>
 
-        {/* Additional Info */}
         <InfoCard title="Additional Info" icon="ℹ️">
           <InfoItem label="Country Code" value={country.cca3} />
           <InfoItem
@@ -242,7 +230,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           )}
         </InfoCard>
 
-        {/* Coat of Arms */}
         {country.coatOfArms.svg && (
           <InfoCard title="Coat of Arms" icon="🛡️">
             <div className="flex items-center justify-center h-full">
@@ -256,7 +243,6 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
         )}
       </div>
 
-      {/* Border Countries */}
       {country.borders && country.borders.length > 0 && (
         <Suspense fallback={<BorderCountriesSkeleton />}>
           <BorderCountries codes={country.borders} />

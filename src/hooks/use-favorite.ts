@@ -6,12 +6,12 @@ export function useFavorite(countryCode: Country["cca3"] | undefined): {
   isFavorite: boolean;
   toggle: () => void;
 } {
-  const record = useSyncExternalStore(
+  const snapshot = useSyncExternalStore(
     localStorageFavorites.subscribe,
     localStorageFavorites.getSnapshot,
   );
 
-  const isFavorite = countryCode ? countryCode in record : false;
+  const isFavorite = countryCode ? countryCode in snapshot : false;
 
   const toggle = () => {
     if (countryCode) {

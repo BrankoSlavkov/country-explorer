@@ -13,7 +13,6 @@ export function CountryFilters({
 }: CountryFiltersProps) {
   return (
     <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-6 mb-8 max-w-7xl mx-auto">
-      {/* Search Country - Full Width */}
       <div className="mb-6">
         <label className="block text-white/70 text-sm mb-2">
           Search Country
@@ -31,9 +30,7 @@ export function CountryFilters({
         </div>
       </div>
 
-      {/* Filter Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Continent */}
         <div>
           <label className="block text-white/70 text-sm mb-2">Continent</label>
           <div className="relative">
@@ -55,7 +52,6 @@ export function CountryFilters({
           </div>
         </div>
 
-        {/* Population */}
         <div>
           <label className="block text-white/70 text-sm mb-2">Population</label>
           <div className="relative">
@@ -73,7 +69,6 @@ export function CountryFilters({
           </div>
         </div>
 
-        {/* Language */}
         <div>
           <label className="block text-white/70 text-sm mb-2">Language</label>
           <div className="relative">
@@ -95,7 +90,6 @@ export function CountryFilters({
           </div>
         </div>
 
-        {/* Sort By */}
         <div>
           <label className="block text-white/70 text-sm mb-2">Sort By</label>
           <div className="relative">

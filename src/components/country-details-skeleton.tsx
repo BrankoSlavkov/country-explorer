@@ -32,21 +32,17 @@ function SkeletonInfoCard() {
 export function CountryDetailsSkeleton() {
   return (
     <div className="space-y-6">
-      {/* Hero Section Skeleton */}
       <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 overflow-hidden">
         <div className="flex flex-col lg:flex-row">
-          {/* Flag Skeleton */}
           <div className="flex-1 flex items-center justify-center p-8 bg-white/5">
             <SkeletonBox className="w-64 h-40 rounded" />
           </div>
 
-          {/* Map Skeleton */}
           <div className="flex-1 flex items-center justify-center p-8 border-t lg:border-t-0 lg:border-l border-white/10">
             <SkeletonBox className="w-[300px] h-[300px] rounded" />
           </div>
         </div>
 
-        {/* Name Section Skeleton */}
         <div className="p-6 border-t border-white/10">
           <div className="flex items-center gap-4">
             <SkeletonBox className="w-12 h-12 rounded" />
@@ -58,7 +54,6 @@ export function CountryDetailsSkeleton() {
         </div>
       </div>
 
-      {/* Info Cards Grid Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <SkeletonInfoCard />
         <SkeletonInfoCard />

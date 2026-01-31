@@ -1,14 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import type { CountryCard as CountryCardType } from "~/api/countries.queries";
+import { formatStatistic } from "~/lib/format";
 
 interface CountryCardProps {
   country: CountryCardType;
 }
 
 export function CountryCard({ country }: CountryCardProps) {
-  const formattedPopulation = new Intl.NumberFormat().format(
-    country.population,
-  );
+  const formattedPopulation = formatStatistic(country.population);
 
   return (
     <Link
