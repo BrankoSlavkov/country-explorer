@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CountryMap } from "~/components/country-map";
-import {
-  ERROR_VARIANT,
-  ErrorState,
-  getErrorVariant,
-} from "~/components/error-state";
+import { ErrorState, getErrorVariant } from "~/components/error-state";
+import { ERROR_VARIANT } from "~/components/error-state/types";
 import { LoadingState } from "~/components/loading-state";
 import { useCountryDetails } from "~/hooks/use-country-details";
 import { useCountryGeoJSON } from "~/hooks/use-country-geojson";

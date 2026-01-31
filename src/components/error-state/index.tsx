@@ -1,29 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { HTTPError } from "ky";
-import type { ValueOf } from "~/types";
-
-export const ERROR_VARIANT = {
-  NOT_FOUND: "not-found",
-  GENERIC: "generic",
-} as const;
-
-export type ErrorVariant = ValueOf<typeof ERROR_VARIANT>;
-
-const ERROR_VARIANTS: Record<ErrorVariant, { icon: string; title: string }> = {
-  [ERROR_VARIANT.NOT_FOUND]: {
-    icon: "🌍",
-    title: "Country Not Found",
-  },
-  [ERROR_VARIANT.GENERIC]: {
-    icon: "⚠️",
-    title: "Something Went Wrong",
-  },
-};
-
-interface ErrorStateProps {
-  message: string;
-  variant?: ErrorVariant;
-}
+import {
+  ERROR_VARIANT,
+  ERROR_VARIANTS,
+  type ErrorStateProps,
+  type ErrorVariant,
+} from "./types";
 
 export function ErrorState({
   message,
@@ -58,5 +40,6 @@ export function getErrorVariant(error: Error | null): ErrorVariant {
   if (error instanceof HTTPError && error.response.status === 404) {
     return ERROR_VARIANT.NOT_FOUND;
   }
+
   return ERROR_VARIANT.GENERIC;
 }
