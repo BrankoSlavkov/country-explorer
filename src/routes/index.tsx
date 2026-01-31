@@ -1,36 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import logo from "~/logo.svg";
+import { CountryCardList } from "~/components/country-card-list";
 
 export const Route = createFileRoute("/")({
   component: function App() {
     return (
-      <div className="text-center">
-        <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
-          <img
-            src={logo}
-            className="h-[40vmin] pointer-events-none animate-[spin_20s_linear_infinite]"
-            alt="logo"
-          />
-          <p>
-            Edit <code>src/routes/index.tsx</code> and save to reload.
-          </p>
-          <a
-            className="text-[#61dafb] hover:underline"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          <a
-            className="text-[#61dafb] hover:underline"
-            href="https://tanstack.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn TanStack
-          </a>
-        </header>
+      <div
+        className="min-h-screen p-8"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 30% 20%, #1a1a2e 0%, #0d0d1a 100%)",
+        }}
+      >
+        <h1 className="text-3xl font-bold text-white mb-8 text-center">
+          Country Explorer
+        </h1>
+        <CountryCardList />
       </div>
     );
   },

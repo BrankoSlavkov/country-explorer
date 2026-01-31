@@ -1,22 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
+import { LoadingState } from "~/components/loading-state";
 
 export const Route = createFileRoute("/demo/tanstack-query")({
   component: TanStackQueryDemo,
 });
 
 function TanStackQueryDemo() {
-  const { data } = useQuery({
-    queryKey: ["todos"],
-    queryFn: () =>
-      Promise.resolve([
-        { id: 1, name: "Alice" },
-        { id: 2, name: "Bob" },
-        { id: 3, name: "Charlie" },
-      ]),
-    initialData: [],
-  });
-
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-linear-to-br from-purple-100 to-blue-100 p-4 text-white"
@@ -29,17 +20,35 @@ function TanStackQueryDemo() {
         <h1 className="text-2xl mb-4">
           TanStack Query Simple Promise Handling
         </h1>
-        <ul className="mb-4 space-y-2">
-          {data.map((todo) => (
-            <li
-              key={todo.id}
-              className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
-            >
-              <span className="text-lg text-white">{todo.name}</span>
-            </li>
-          ))}
-        </ul>
+        <Suspense fallback={<LoadingState />}>
+          <TodoList />
+        </Suspense>
       </div>
     </div>
+  );
+}
+
+function TodoList() {
+  const { data } = useSuspenseQuery({
+    queryKey: ["todos"],
+    queryFn: () =>
+      Promise.resolve([
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+        { id: 3, name: "Charlie" },
+      ]),
+  });
+
+  return (
+    <ul className="mb-4 space-y-2">
+      {data.map((todo) => (
+        <li
+          key={todo.id}
+          className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
+        >
+          <span className="text-lg text-white">{todo.name}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
