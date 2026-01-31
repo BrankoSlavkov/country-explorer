@@ -1,12 +1,10 @@
 import type { Country } from "~/api/countries.types";
 
 export type FavoritesRecord = Record<Country["cca3"], true>;
+export const KEY = "favorite-countries";
 
-class LocalStorageFavorites {
-  #key = "favorite-countries";
-  #cachedRecord: FavoritesRecord = JSON.parse(
-    localStorage.getItem(this.#key) || "{}",
-  );
+export class LocalStorageFavorites {
+  #cachedRecord: FavoritesRecord;
 
   #listeners = new Set<() => void>();
 
@@ -17,12 +15,27 @@ class LocalStorageFavorites {
   };
 
   constructor() {
+    this.#cachedRecord = this.#readFromStorage();
+
     window.addEventListener("storage", (e) => {
-      if (e.key === this.#key) {
-        this.#cachedRecord = JSON.parse(e.newValue || "{}");
-        this.#emitChange();
+      if (e.key !== KEY) return;
+
+      if (e.newValue === null) {
+        this.#cachedRecord = {};
+      } else {
+        this.#cachedRecord = JSON.parse(e.newValue);
       }
+
+      this.#emitChange();
     });
+  }
+
+  #readFromStorage(): FavoritesRecord {
+    try {
+      return JSON.parse(localStorage.getItem(KEY) || "{}");
+    } catch {
+      return {};
+    }
   }
 
   subscribe = (listener: () => void) => {
@@ -48,7 +61,7 @@ class LocalStorageFavorites {
     }
 
     this.#cachedRecord = newRecord;
-    localStorage.setItem(this.#key, JSON.stringify(this.#cachedRecord));
+    localStorage.setItem(KEY, JSON.stringify(this.#cachedRecord));
     this.#emitChange();
   }
 }
