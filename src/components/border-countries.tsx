@@ -1,9 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { countryQueries } from "~/api/countries.queries";
+import type { Country } from "~/api/countries.types";
 
 interface BorderCountriesProps {
-  codes: string[];
+  codes: NonNullable<Country["borders"]>;
 }
 
 export function BorderCountries({ codes }: BorderCountriesProps) {

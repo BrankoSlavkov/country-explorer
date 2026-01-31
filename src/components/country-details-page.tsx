@@ -1,15 +1,22 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { countryQueries } from "~/api/countries.queries";
+import type { Country } from "~/api/countries.types";
 import { CountryDetails } from "~/components/country-details";
 import { CountryDetailsSkeleton } from "~/components/country-details-skeleton";
 import { ErrorState } from "~/components/error-state";
+import { FavoriteButton } from "~/components/favorite-button";
+import { ShareButton } from "~/components/share-button";
 
 interface CountryDetailsPageProps {
-  countryName: string;
+  countryName: Country["name"]["common"];
 }
 
 export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
+  const { data: country } = useQuery(countryQueries.detail(countryName));
+
   return (
     <div
       className="min-h-screen text-white"
@@ -24,9 +31,12 @@ export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
             to="/"
             className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
           >
-            <span>←</span>
-            <span>Back to Countries</span>
+            ← Back to Countries
           </Link>
+          <div className="flex items-center gap-2">
+            <ShareButton title={countryName} />
+            <FavoriteButton countryCode={country?.cca3} />
+          </div>
         </div>
       </header>
 

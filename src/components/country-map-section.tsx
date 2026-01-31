@@ -1,8 +1,9 @@
+import type { Country } from "~/api/countries.types";
 import { CountryMap } from "~/components/country-map";
 import { useCountryGeoJSON } from "~/hooks/use-country-geojson";
 
 interface CountryMapSectionProps {
-  cca3: string;
+  cca3: Country["cca3"];
 }
 
 export function CountryMapSection({ cca3 }: CountryMapSectionProps) {

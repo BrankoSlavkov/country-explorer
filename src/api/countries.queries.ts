@@ -1,117 +1,103 @@
 import { queryOptions } from "@tanstack/react-query";
 import { countriesApi } from "~/api/client";
+import type { Country, CountryBorder } from "~/api/countries.types";
 
-interface CountryName {
-  common: string;
-  official: string;
-  nativeName?: Record<string, { official: string; common: string }>;
-}
-
-interface Demonym {
-  f: string;
-  m: string;
-}
-
-export interface Country {
-  name: CountryName;
-  tld?: string[];
-  cca2: string;
-  ccn3?: string;
-  cca3: string;
-  cioc?: string;
-  independent?: boolean;
-  status: string;
-  unMember: boolean;
-  currencies?: Record<string, { name: string; symbol: string }>;
-  idd: {
-    root?: string;
-    suffixes?: string[];
-  };
-  capital?: string[];
-  altSpellings: string[];
-  region: string;
-  subregion?: string;
-  languages?: Record<string, string>;
-  latlng: [number, number];
-  landlocked: boolean;
-  borders?: string[];
-  area: number;
-  demonyms?: {
-    eng: Demonym;
-    fra?: Demonym;
-  };
-  translations: Record<string, { official: string; common: string }>;
-  flag: string;
-  maps: {
-    googleMaps: string;
-    openStreetMaps: string;
-  };
-  population: number;
-  gini?: Record<string, number>;
-  fifa?: string;
-  car: {
-    signs?: string[];
-    side: string;
-  };
-  timezones: string[];
-  continents: string[];
-  flags: {
-    png: string;
-    svg: string;
-    alt?: string;
-  };
-  coatOfArms: {
-    png?: string;
-    svg?: string;
-  };
-  startOfWeek: string;
-  capitalInfo: {
-    latlng?: [number, number];
-  };
-  postalCode?: {
-    format: string;
-    regex?: string;
-  };
-}
-
-export type CountryCard = Pick<
+export type {
   Country,
-  "name" | "flag" | "population" | "continents"
->;
+  CountryBorder,
+  CountryCard,
+} from "~/api/countries.types";
 
-export type CountryBorder = Pick<Country, "name" | "cca3" | "flags">;
+type CountryField = keyof Country;
+
+type MaxTenFields =
+  | [CountryField]
+  | [CountryField, CountryField]
+  | [CountryField, CountryField, CountryField]
+  | [CountryField, CountryField, CountryField, CountryField]
+  | [CountryField, CountryField, CountryField, CountryField, CountryField]
+  | [
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+    ]
+  | [
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+    ]
+  | [
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+    ]
+  | [
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+    ]
+  | [
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+      CountryField,
+    ];
 
 export const countryQueries = {
-  all: () => ["countries"] as const,
+  all: () => [{ entity: "countries" }] as const,
 
-  list: () =>
+  list: <T extends MaxTenFields>(fields: T) =>
     queryOptions({
-      queryKey: [...countryQueries.all(), "list"] as const,
-      queryFn: () => countriesApi.get("all").json<Country[]>(),
-    }),
-
-  cards: () =>
-    queryOptions({
-      queryKey: [...countryQueries.all(), "cards"] as const,
+      queryKey: [
+        { ...countryQueries.all()[0], scope: "list", fields },
+      ] as const,
       queryFn: () =>
         countriesApi
           .get("all", {
-            searchParams: { fields: "name,flag,population,continents" },
+            searchParams: { fields: fields.join(",") },
           })
-          .json<CountryCard[]>(),
+          .json<Pick<Country, T[number]>[]>(),
     }),
 
-  detail: (name: string) =>
+  detail: (name: Country["name"]["common"]) =>
     queryOptions({
-      queryKey: [...countryQueries.all(), "detail", name] as const,
+      queryKey: [
+        { ...countryQueries.all()[0], scope: "detail", name },
+      ] as const,
       queryFn: () => countriesApi.get(`name/${name}`).json<Country[]>(),
       select: (data) => data[0],
       enabled: !!name,
     }),
 
-  borders: (codes: string[]) =>
+  borders: (codes: NonNullable<Country["borders"]>) =>
     queryOptions({
-      queryKey: [...countryQueries.all(), "borders", codes] as const,
+      queryKey: [
+        { ...countryQueries.all()[0], scope: "borders", codes },
+      ] as const,
       queryFn: () =>
         countriesApi
           .get(`alpha`, {

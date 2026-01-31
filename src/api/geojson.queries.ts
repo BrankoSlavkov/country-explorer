@@ -6,6 +6,7 @@ import type {
   Polygon,
 } from "geojson";
 import { geojsonApi } from "~/api/client";
+import type { Country } from "~/api/countries.types";
 
 export type CountryFeature = Feature<Polygon | MultiPolygon, { name: string }>;
 
@@ -15,7 +16,7 @@ type CountriesGeoJSON = FeatureCollection<
 >;
 
 export const geojsonQueries = {
-  country: (countryCode: string) =>
+  country: (countryCode: Country["cca3"]) =>
     queryOptions({
       queryKey: [{ entity: "geojson", scope: "country", countryCode }] as const,
       queryFn: async (): Promise<CountryFeature | null> => {

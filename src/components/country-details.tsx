@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { countryQueries } from "~/api/countries.queries";
+import type { Country } from "~/api/countries.types";
 import {
   BorderCountries,
   BorderCountriesSkeleton,
@@ -11,7 +12,7 @@ import { InfoCard } from "~/components/info-card";
 import { InfoItem } from "~/components/info-item";
 
 interface CountryDetailsProps {
-  countryName: string;
+  countryName: Country["name"]["common"];
 }
 
 export function CountryDetails({ countryName }: CountryDetailsProps) {
@@ -48,7 +49,7 @@ export function CountryDetails({ countryName }: CountryDetailsProps) {
           <div className="flex-1 flex items-center justify-center p-8 border-t lg:border-t-0 lg:border-l border-white/10">
             <Suspense
               fallback={
-                <div className="w-[300px] h-[300px] animate-pulse bg-white/10 rounded" />
+                <div className="size-75 bg-white/10 rounded animate-pulse" />
               }
             >
               <CountryMapSection cca3={country.cca3} />
