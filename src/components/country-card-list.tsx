@@ -25,12 +25,17 @@ export function CountryCardList() {
     const continentSet = new Set<string>();
     const languageSet = new Set<string>();
 
-    countries.forEach((country) => {
-      country.continents?.forEach((c) => continentSet.add(c));
-      if (country.languages) {
-        Object.values(country.languages).forEach((l) => languageSet.add(l));
+    for (const country of countries) {
+      for (const c of country.continents ?? []) {
+        continentSet.add(c);
       }
-    });
+      
+      if (country.languages) {
+        for (const l of Object.values(country.languages)) {
+          languageSet.add(l);
+        }
+      }
+    }
 
     return {
       continents: Array.from(continentSet).sort(),

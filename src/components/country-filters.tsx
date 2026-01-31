@@ -17,7 +17,10 @@ export function CountryFilters({
   return (
     <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-6 mb-8 max-w-7xl mx-auto">
       <div className="mb-6">
-        <label className="block text-white/70 text-sm mb-2">
+        <label
+          htmlFor="search-country"
+          className="block text-white/70 text-sm mb-2"
+        >
           Search Country
         </label>
         <div className="relative">
@@ -26,6 +29,7 @@ export function CountryFilters({
             className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50"
           />
           <input
+            id="search-country"
             type="text"
             placeholder="Type to search..."
             defaultValue={search ?? ""}
@@ -37,9 +41,15 @@ export function CountryFilters({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label className="block text-white/70 text-sm mb-2">Continent</label>
+          <label
+            htmlFor="filter-continent"
+            className="block text-white/70 text-sm mb-2"
+          >
+            Continent
+          </label>
           <div className="relative">
             <select
+              id="filter-continent"
               className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40 disabled:opacity-50"
               disabled={isLoading}
             >
@@ -58,9 +68,17 @@ export function CountryFilters({
         </div>
 
         <div>
-          <label className="block text-white/70 text-sm mb-2">Population</label>
+          <label
+            htmlFor="filter-population"
+            className="block text-white/70 text-sm mb-2"
+          >
+            Population
+          </label>
           <div className="relative">
-            <select className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40">
+            <select
+              id="filter-population"
+              className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40"
+            >
               <option value="">All Populations</option>
               <option value="small">&lt; 1M</option>
               <option value="medium">1M - 10M</option>
@@ -75,9 +93,15 @@ export function CountryFilters({
         </div>
 
         <div>
-          <label className="block text-white/70 text-sm mb-2">Language</label>
+          <label
+            htmlFor="filter-language"
+            className="block text-white/70 text-sm mb-2"
+          >
+            Language
+          </label>
           <div className="relative">
             <select
+              id="filter-language"
               className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40 disabled:opacity-50"
               disabled={isLoading}
             >
@@ -96,9 +120,17 @@ export function CountryFilters({
         </div>
 
         <div>
-          <label className="block text-white/70 text-sm mb-2">Sort By</label>
+          <label
+            htmlFor="filter-sort"
+            className="block text-white/70 text-sm mb-2"
+          >
+            Sort By
+          </label>
           <div className="relative">
-            <select className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40">
+            <select
+              id="filter-sort"
+              className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40"
+            >
               <option value="name-asc">Name (A-Z)</option>
               <option value="population-desc">Population (High to Low)</option>
               <option value="population-asc">Population (Low to High)</option>
