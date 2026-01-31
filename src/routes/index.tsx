@@ -1,7 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod/v4";
 import { CountryCardList } from "~/components/country-card-list";
 
+const searchParamsSchema = z.object({
+  search: z.string().optional(),
+});
+
 export const Route = createFileRoute("/")({
+  validateSearch: zodValidator(searchParamsSchema),
   component: function App() {
     return (
       <div

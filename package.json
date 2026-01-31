@@ -20,6 +20,7 @@
     "@tanstack/react-router": "1.157.16",
     "@tanstack/react-router-devtools": "1.157.16",
     "@tanstack/router-plugin": "1.157.16",
+    "@tanstack/zod-adapter": "1.157.18",
     "clsx": "2.1.1",
     "d3": "7.9.0",
     "ky": "1.14.3",
@@ -27,7 +28,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-error-boundary": "6.1.0",
-    "tailwindcss": "4.1.18"
+    "tailwindcss": "4.1.18",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.13",

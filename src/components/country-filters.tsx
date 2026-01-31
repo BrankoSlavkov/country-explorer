@@ -1,4 +1,5 @@
 import { ChevronDown, Search } from "lucide-react";
+import { useSearchParam } from "~/hooks/use-search-param";
 
 interface CountryFiltersProps {
   continents: string[];
@@ -11,6 +12,8 @@ export function CountryFilters({
   languages,
   isLoading,
 }: CountryFiltersProps) {
+  const { search, setSearch } = useSearchParam();
+
   return (
     <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-6 mb-8 max-w-7xl mx-auto">
       <div className="mb-6">
@@ -25,6 +28,8 @@ export function CountryFilters({
           <input
             type="text"
             placeholder="Type to search..."
+            defaultValue={search ?? ""}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-white/10 border border-white/20 rounded-lg py-2 pl-10 pr-4 text-white placeholder-white/50 focus:outline-none focus:border-white/40"
           />
         </div>
