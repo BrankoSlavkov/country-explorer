@@ -39,7 +39,7 @@ export function CountryDetailsSkeleton() {
           </div>
 
           <div className="flex-1 flex items-center justify-center p-8 border-t lg:border-t-0 lg:border-l border-white/10">
-            <SkeletonBox className="w-[300px] h-[300px] rounded" />
+            <SkeletonBox className="size-75 rounded" />
           </div>
         </div>
 
