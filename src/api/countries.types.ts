@@ -80,9 +80,9 @@ export type CountryCard = Pick<
   | "languages"
   | "capital"
   | "region"
-  | "subregion"
   | "area"
   | "currencies"
+  | "cca3"
 >;
 
 export type CountryBorder = Pick<Country, "name" | "cca3" | "flags">;

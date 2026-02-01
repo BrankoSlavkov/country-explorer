@@ -12,9 +12,9 @@ export function useCountries() {
       "languages",
       "capital",
       "region",
-      "subregion",
       "area",
       "currencies",
+      "cca3",
     ]),
   );
 
