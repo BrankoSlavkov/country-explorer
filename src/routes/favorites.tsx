@@ -15,28 +15,26 @@ function FavoritesPage() {
 
   const favoriteCountries = useMemo(() => {
     if (!countries) return [];
-    return countries.filter((country) =>
-      favoritesList.includes(country.cca3),
-    );
+    return countries.filter((country) => favoritesList.includes(country.cca3));
   }, [countries, favoritesList]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+    <div
+      className="min-h-screen p-8"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 30% 20%, #1a1a2e 0%, #0d0d1a 100%)",
+      }}
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
+        <div className="mb-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-4"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to All Countries
           </Link>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Favorite Countries
-          </h1>
-          <p className="text-white/70">
-            {favoriteCountries.length} {favoriteCountries.length === 1 ? "country" : "countries"} in your favorites
-          </p>
         </div>
 
         {isLoading ? (
@@ -48,7 +46,8 @@ function FavoritesPage() {
               No favorites yet
             </h2>
             <p className="text-white/70 mb-6">
-              Start adding countries to your favorites by clicking the heart icon
+              Start adding countries to your favorites by clicking the heart
+              icon
             </p>
             <Link
               to="/"
