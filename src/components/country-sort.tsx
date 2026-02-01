@@ -12,6 +12,8 @@ export const SORT_OPTIONS = [
 
 export type SortOption = (typeof SORT_OPTIONS)[number]["value"];
 
+export const DEFAULT_SORT: SortOption = "name-asc";
+
 interface CountrySortProps {
   isLoading?: boolean;
 }
@@ -33,7 +35,7 @@ export function CountrySort({ isLoading }: CountrySortProps) {
       </label>
       <select
         id="sort-by"
-        value={sortBy ?? "name-asc"}
+        value={sortBy ?? DEFAULT_SORT}
         onChange={(e) => handleSortChange(e.target.value as SortOption)}
         disabled={isLoading}
         className="w-full px-4 py-2.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"

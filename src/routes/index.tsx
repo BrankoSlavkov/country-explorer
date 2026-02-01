@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod/v4";
 import { CountryCardList } from "~/components/country-card-list";
+import { DEFAULT_POPULATION_FILTER } from "~/components/country-population-filter";
+import { DEFAULT_SORT } from "~/components/country-sort";
 
 const searchParamsSchema = z.object({
   search: z.string().optional(),
@@ -17,7 +19,13 @@ const searchParamsSchema = z.object({
       "area-desc",
     ])
     .optional()
-    .catch("name-asc"),
+    .catch(DEFAULT_SORT),
+  population: z
+    .enum(["all", "small", "medium", "large", "huge"])
+    .optional()
+    .catch(DEFAULT_POPULATION_FILTER),
+  continent: z.string().optional(),
+  language: z.string().optional(),
 });
 
 export const Route = createFileRoute("/")({
