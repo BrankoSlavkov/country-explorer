@@ -47,7 +47,16 @@ export function CountryCard({ country }: CountryCardProps) {
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    // Save scroll position
+    const scrollY = window.scrollY;
+
     toggleFavorite(country.cca3);
+
+    // Restore scroll position after state update
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollY);
+    });
   };
 
   const cardContent = (
