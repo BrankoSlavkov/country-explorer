@@ -90,4 +90,29 @@ describe("LocalStorageFavorites", () => {
     expect(favorites.has("USA")).toBe(true);
     expect(favorites.has("CAN")).toBe(false);
   });
+
+  it("stops notifying unsubscribed listeners", () => {
+    const listener = vi.fn();
+    const unsubscribe = favorites.subscribe(listener);
+
+    unsubscribe();
+    favorites.toggle("USA");
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it("handles multiple favorites", () => {
+    favorites.toggle("USA");
+    favorites.toggle("CAN");
+    favorites.toggle("MEX");
+
+    expect(favorites.getSnapshot()).toEqual({
+      USA: true,
+      CAN: true,
+      MEX: true,
+    });
+    expect(favorites.has("USA")).toBe(true);
+    expect(favorites.has("CAN")).toBe(true);
+    expect(favorites.has("MEX")).toBe(true);
+  });
 });
