@@ -1,4 +1,6 @@
-import { ChevronDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { CountryContinentFilter } from "~/components/country-continent-filter";
+import { CountryLanguageFilter } from "~/components/country-language-filter";
 import { CountryPopulationFilter } from "~/components/country-population-filter";
 import { CountrySort } from "~/components/country-sort";
 import { useSearchParam } from "~/hooks/use-search-param";
@@ -17,7 +19,7 @@ export function CountryFilters({
   const { search, setSearch } = useSearchParam();
 
   return (
-    <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-6 mb-8 max-w-7xl mx-auto">
+    <div className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-6 px-8 mb-8 max-w-7xl mx-auto">
       <div className="mb-6">
         <label
           htmlFor="search-country"
@@ -42,61 +44,11 @@ export function CountryFilters({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <label
-            htmlFor="filter-continent"
-            className="block text-white/70 text-sm mb-2"
-          >
-            Continent
-          </label>
-          <div className="relative">
-            <select
-              id="filter-continent"
-              className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40 disabled:opacity-50"
-              disabled={isLoading}
-            >
-              <option value="">All Continents</option>
-              {continents.map((continent) => (
-                <option key={continent} value={continent}>
-                  {continent}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              size={18}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"
-            />
-          </div>
-        </div>
+        <CountryContinentFilter continents={continents} isLoading={isLoading} />
 
         <CountryPopulationFilter isLoading={isLoading} />
 
-        <div>
-          <label
-            htmlFor="filter-language"
-            className="block text-white/70 text-sm mb-2"
-          >
-            Language
-          </label>
-          <div className="relative">
-            <select
-              id="filter-language"
-              className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40 disabled:opacity-50"
-              disabled={isLoading}
-            >
-              <option value="">All Languages</option>
-              {languages.map((language) => (
-                <option key={language} value={language}>
-                  {language}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              size={18}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"
-            />
-          </div>
-        </div>
+        <CountryLanguageFilter languages={languages} isLoading={isLoading} />
 
         <CountrySort isLoading={isLoading} />
       </div>

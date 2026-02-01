@@ -9,6 +9,8 @@ interface UseCountryFilteringParams {
   search?: string;
   sortBy: SortOption;
   populationFilter: PopulationFilter;
+  continent?: string;
+  language?: string;
   isFavorite: (cca3: string) => boolean;
   page: number;
   perPage: number;
@@ -19,6 +21,8 @@ export function useCountryFiltering({
   search,
   sortBy,
   populationFilter,
+  continent,
+  language,
   isFavorite,
   page,
   perPage,
@@ -49,6 +53,24 @@ export function useCountryFiltering({
           ) {
             return false;
           }
+        }
+      }
+
+      // Continent filter
+      if (continent) {
+        if (!country.continents.includes(continent)) {
+          return false;
+        }
+      }
+
+      // Language filter
+      if (language) {
+        if (!country.languages) {
+          return false;
+        }
+        const countryLanguages = Object.values(country.languages);
+        if (!countryLanguages.includes(language)) {
+          return false;
         }
       }
 
@@ -93,5 +115,15 @@ export function useCountryFiltering({
       totalPages,
       paginatedCountries: paginated,
     };
-  }, [countries, search, isFavorite, page, perPage, sortBy, populationFilter]);
+  }, [
+    countries,
+    search,
+    isFavorite,
+    page,
+    perPage,
+    sortBy,
+    populationFilter,
+    continent,
+    language,
+  ]);
 }
