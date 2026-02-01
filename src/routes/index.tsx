@@ -5,6 +5,8 @@ import { CountryCardList } from "~/components/country-card-list";
 
 const searchParamsSchema = z.object({
   search: z.string().optional(),
+  page: z.number().int().positive().optional().catch(1),
+  perPage: z.number().int().positive().optional().catch(20),
 });
 
 export const Route = createFileRoute("/")({
