@@ -7,6 +7,17 @@ const searchParamsSchema = z.object({
   search: z.string().optional(),
   page: z.number().int().positive().optional().catch(1),
   perPage: z.number().int().positive().optional().catch(20),
+  sortBy: z
+    .enum([
+      "name-asc",
+      "name-desc",
+      "population-asc",
+      "population-desc",
+      "area-asc",
+      "area-desc",
+    ])
+    .optional()
+    .catch("name-asc"),
 });
 
 export const Route = createFileRoute("/")({

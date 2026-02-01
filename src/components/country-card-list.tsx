@@ -24,6 +24,7 @@ export function CountryCardList() {
   const search = searchParams.search;
   const page = searchParams.page ?? 1;
   const perPage = searchParams.perPage ?? 20;
+  const sortBy = searchParams.sortBy ?? "name-asc";
   const navigate = useNavigate({ from: "/" });
   const { countries, isLoading, continents, languages } = useCountries();
   const { compareMode, toggleCompareMode, selectedCountries, removeCountry } =
@@ -43,13 +44,31 @@ export function CountryCardList() {
       return true;
     });
 
-    // Sort to show favorites first
-    const sorted = filtered.sort((a, b) => {
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      // Favorites always come first regardless of sort
       const aFav = isFavorite(a.cca3);
       const bFav = isFavorite(b.cca3);
       if (aFav && !bFav) return -1;
       if (!aFav && bFav) return 1;
-      return 0;
+
+      // Then apply selected sort
+      switch (sortBy) {
+        case "name-asc":
+          return a.name.common.localeCompare(b.name.common);
+        case "name-desc":
+          return b.name.common.localeCompare(a.name.common);
+        case "population-asc":
+          return a.population - b.population;
+        case "population-desc":
+          return b.population - a.population;
+        case "area-asc":
+          return a.area - b.area;
+        case "area-desc":
+          return b.area - a.area;
+        default:
+          return 0;
+      }
     });
 
     const totalPages = Math.ceil(sorted.length / perPage);
@@ -62,7 +81,7 @@ export function CountryCardList() {
       totalPages,
       paginatedCountries: paginated,
     };
-  }, [countries, search, isFavorite, page, perPage]);
+  }, [countries, search, isFavorite, page, perPage, sortBy]);
 
   const handlePageChange = (newPage: number) => {
     navigate({ search: (prev) => ({ ...prev, page: newPage }) });

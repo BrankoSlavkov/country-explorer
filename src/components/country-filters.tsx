@@ -1,4 +1,5 @@
 import { ChevronDown, Search } from "lucide-react";
+import { CountrySort } from "~/components/country-sort";
 import { useSearchParam } from "~/hooks/use-search-param";
 
 interface CountryFiltersProps {
@@ -119,30 +120,7 @@ export function CountryFilters({
           </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="filter-sort"
-            className="block text-white/70 text-sm mb-2"
-          >
-            Sort By
-          </label>
-          <div className="relative">
-            <select
-              id="filter-sort"
-              className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white appearance-none focus:outline-none focus:border-white/40"
-            >
-              <option value="name-asc">Name (A-Z)</option>
-              <option value="population-desc">Population (High to Low)</option>
-              <option value="population-asc">Population (Low to High)</option>
-              <option value="area-desc">Area (Largest First)</option>
-              <option value="area-asc">Area (Smallest First)</option>
-            </select>
-            <ChevronDown
-              size={18}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none"
-            />
-          </div>
-        </div>
+        <CountrySort isLoading={isLoading} />
       </div>
     </div>
   );
