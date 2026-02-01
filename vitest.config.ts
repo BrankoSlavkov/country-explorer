@@ -11,7 +11,17 @@ const vitestConfig = defineConfig({
     coverage: {
       enabled: true,
       provider: "v8",
-      include: ["src/lib/**"],
+      include: [
+        "src/lib/**",
+        "src/hooks/**",
+        "src/components/**",
+        "src/contexts/**",
+      ],
+      exclude: [
+        "src/**/*.test.{ts,tsx}",
+        "src/routeTree.gen.ts",
+        "src/main.tsx",
+      ],
     },
   },
   resolve: {
