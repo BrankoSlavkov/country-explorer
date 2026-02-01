@@ -1,47 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { countryQueries } from "~/api/countries.queries";
 import { CountryCard } from "~/components/country-card";
 import { CountryCardListSkeleton } from "~/components/country-card-list-skeleton";
 import { CountryFilters } from "~/components/country-filters";
+import { useCountries } from "~/hooks/use-countries";
 import { Route } from "~/routes/index";
 
 export function CountryCardList() {
   const { search } = Route.useSearch();
-
-  const { data: countries, isLoading } = useQuery(
-    countryQueries.list([
-      "name",
-      "flag",
-      "population",
-      "continents",
-      "languages",
-    ]),
-  );
-
-  const { continents, languages } = useMemo(() => {
-    if (!countries) return { continents: [], languages: [] };
-
-    const continentSet = new Set<string>();
-    const languageSet = new Set<string>();
-
-    for (const country of countries) {
-      for (const c of country.continents ?? []) {
-        continentSet.add(c);
-      }
-      
-      if (country.languages) {
-        for (const l of Object.values(country.languages)) {
-          languageSet.add(l);
-        }
-      }
-    }
-
-    return {
-      continents: Array.from(continentSet).sort(),
-      languages: Array.from(languageSet).sort(),
-    };
-  }, [countries]);
+  const { countries, isLoading, continents, languages } = useCountries();
 
   const filteredCountries = useMemo(() => {
     if (!countries) return [];

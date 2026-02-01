@@ -73,7 +73,16 @@ export interface Country {
 
 export type CountryCard = Pick<
   Country,
-  "name" | "flag" | "population" | "continents" | "languages"
+  | "name"
+  | "flag"
+  | "population"
+  | "continents"
+  | "languages"
+  | "capital"
+  | "region"
+  | "subregion"
+  | "area"
+  | "currencies"
 >;
 
 export type CountryBorder = Pick<Country, "name" | "cca3" | "flags">;
