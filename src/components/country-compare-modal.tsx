@@ -220,13 +220,20 @@ export function CountryCompareModal({
                 <button
                   type="button"
                   onClick={() => onRemoveCountry(country.name.common)}
+                  aria-label={`Remove ${country.name.common} from comparison`}
                   className="absolute top-2 right-2 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition-colors cursor-pointer"
                 >
-                  <X className="w-4 h-4" />
+                  <X aria-hidden="true" className="w-4 h-4" />
                 </button>
 
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-4xl">{country.flag}</span>
+                  <span
+                    className="text-4xl"
+                    role="img"
+                    aria-label={`Flag of ${country.name.common}`}
+                  >
+                    {country.flag}
+                  </span>
                   <h3 className="font-semibold text-gray-900 text-lg">
                     {country.name.common}
                   </h3>
@@ -309,23 +316,33 @@ export function CountryCompareModal({
 
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900">
+            <figure className="bg-gray-50 p-6 rounded-lg">
+              <figcaption className="text-lg font-semibold mb-4 text-gray-900">
                 Population Comparison
-              </h3>
+              </figcaption>
               <div className="flex justify-center overflow-x-auto">
-                <svg ref={populationChartRef} width="500" />
+                <svg
+                  ref={populationChartRef}
+                  width="500"
+                  role="img"
+                  aria-label={`Bar chart comparing population: ${populationData.map((d) => `${d.name}: ${formatStatistic(d.value)}`).join(", ")}`}
+                />
               </div>
-            </div>
+            </figure>
 
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900">
+            <figure className="bg-gray-50 p-6 rounded-lg">
+              <figcaption className="text-lg font-semibold mb-4 text-gray-900">
                 Area Comparison
-              </h3>
+              </figcaption>
               <div className="flex justify-center overflow-x-auto">
-                <svg ref={areaChartRef} width="500" />
+                <svg
+                  ref={areaChartRef}
+                  width="500"
+                  role="img"
+                  aria-label={`Bar chart comparing area: ${areaData.map((d) => `${d.name}: ${formatStatistic(d.value)} km²`).join(", ")}`}
+                />
               </div>
-            </div>
+            </figure>
           </div>
         </DialogBody>
       </DialogContent>

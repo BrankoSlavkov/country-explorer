@@ -101,19 +101,26 @@ export function CountryPagination({
   const endItem = Math.min(page * perPage, filteredCountries.length);
 
   return (
-    <div className="flex items-center justify-between max-w-7xl mx-auto mt-8 mb-8">
+    <nav
+      aria-label="Pagination"
+      className="flex items-center justify-between max-w-7xl mx-auto mt-8 mb-8"
+    >
       <div className="flex items-center gap-2">
-        <span className="text-white/70 text-sm">Show:</span>
+        <label htmlFor="items-per-page" className="text-white/80 text-sm">
+          Show:
+        </label>
         <select
+          id="items-per-page"
           value={perPage}
           onChange={(e) => handlePerPageChange(Number(e.target.value))}
+          aria-label="Number of countries per page"
           className="bg-white/10 text-white border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value={20}>20</option>
           <option value={50}>50</option>
           <option value={100}>100</option>
         </select>
-        <span className="text-white/70 text-sm">per page</span>
+        <span className="text-white/80 text-sm">per page</span>
       </div>
 
       <Pagination>
@@ -122,6 +129,7 @@ export function CountryPagination({
             <PaginationPrevious
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 1}
+              aria-label="Go to previous page"
             />
           </PaginationItem>
 
@@ -133,6 +141,8 @@ export function CountryPagination({
                 <PaginationLink
                   onClick={() => handlePageChange(pageNum)}
                   isActive={page === pageNum}
+                  aria-label={`Go to page ${pageNum}`}
+                  aria-current={page === pageNum ? "page" : undefined}
                 >
                   {pageNum}
                 </PaginationLink>
@@ -144,14 +154,15 @@ export function CountryPagination({
             <PaginationNext
               onClick={() => handlePageChange(page + 1)}
               disabled={page === totalPages}
+              aria-label="Go to next page"
             />
           </PaginationItem>
         </PaginationContent>
       </Pagination>
 
-      <div className="text-white/70 text-sm">
+      <p className="text-white/80 text-sm" aria-live="polite">
         Showing {startItem} to {endItem} of {filteredCountries.length} countries
-      </div>
-    </div>
+      </p>
+    </nav>
   );
 }

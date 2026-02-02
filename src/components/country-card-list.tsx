@@ -66,24 +66,34 @@ export function CountryCardList() {
           <Link
             to="/favorites"
             className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20"
+            aria-label={`View favorites, ${favoritesCount} saved`}
           >
-            <Heart className="w-5 h-5" />
+            <Heart aria-hidden="true" className="w-5 h-5" />
             Favorites ({favoritesCount})
           </Link>
 
           <button
             type="button"
             onClick={toggleCompareMode}
+            aria-pressed={compareMode}
+            aria-label={
+              compareMode
+                ? "Exit compare mode"
+                : "Enter compare mode to select countries for comparison"
+            }
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
               compareMode
                 ? "bg-blue-600 text-white hover:bg-blue-700"
                 : "bg-blue-500 text-white hover:bg-blue-600"
             }`}
           >
-            <GitCompare className="w-5 h-5" />
+            <GitCompare aria-hidden="true" className="w-5 h-5" />
             {compareMode ? "Exit Compare Mode" : "Compare Mode"}
             {compareMode && selectedCountries.length > 0 && (
-              <span className="bg-white text-blue-600 px-2 py-0.5 rounded-full text-sm font-bold">
+              <span
+                className="bg-white text-blue-600 px-2 py-0.5 rounded-full text-sm font-bold"
+                aria-label={`${selectedCountries.length} countries selected`}
+              >
                 {selectedCountries.length}
               </span>
             )}
@@ -93,6 +103,7 @@ export function CountryCardList() {
             <button
               type="button"
               onClick={() => setShowCompareModal(true)}
+              aria-label={`Compare ${selectedCountries.length} selected countries`}
               className="px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all"
             >
               Compare Selected ({selectedCountries.length})
@@ -103,13 +114,13 @@ export function CountryCardList() {
         <CountryFilters continents={continents} languages={languages} />
       </div>
 
-      <div className="mb-6">
+      <section aria-label="Countries list" className="mb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {paginatedCountries.map((country) => (
             <CountryCard key={country.name.common} country={country} />
           ))}
         </div>
-      </div>
+      </section>
 
       <CountryPagination
         countries={countries}

@@ -76,36 +76,52 @@ export function CountryCard({ country }: CountryCardProps) {
         <button
           type="button"
           onClick={handleFavoriteClick}
+          aria-label={
+            favorite
+              ? `Remove ${country.name.common} from favorites`
+              : `Add ${country.name.common} to favorites`
+          }
+          aria-pressed={favorite}
           className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors z-10"
         >
           <Heart
+            aria-hidden="true"
             className={`w-5 h-5 transition-colors ${
               favorite
                 ? "fill-red-500 text-red-500"
-                : "text-white/70 hover:text-white"
+                : "text-white/80 hover:text-white"
             }`}
           />
         </button>
       )}
       {compareMode && selected && (
-        <div className="absolute top-4 right-4 bg-blue-500 rounded-full p-1">
-          <Check className="w-5 h-5 text-white" />
+        <div
+          className="absolute top-4 right-4 bg-blue-500 rounded-full p-1"
+          aria-label="Selected for comparison"
+        >
+          <Check aria-hidden="true" className="w-5 h-5 text-white" />
         </div>
       )}
-      <div className="text-6xl mb-4">{country.flag}</div>
+      <div
+        className="text-6xl mb-4"
+        role="img"
+        aria-label={`Flag of ${country.name.common}`}
+      >
+        {country.flag}
+      </div>
       <h2 className="text-xl font-semibold text-white mb-3">
         {country.name.common}
       </h2>
-      <div className="space-y-2 text-white/70 text-sm">
-        <p>
-          <span className="text-white/50">Population:</span>{" "}
-          {formattedPopulation}
-        </p>
-        <p>
-          <span className="text-white/50">Continent:</span>{" "}
-          {country.continents.join(", ")}
-        </p>
-      </div>
+      <dl className="space-y-2 text-white/80 text-sm">
+        <div>
+          <dt className="inline text-white/60">Population:</dt>{" "}
+          <dd className="inline">{formattedPopulation}</dd>
+        </div>
+        <div>
+          <dt className="inline text-white/60">Continent:</dt>{" "}
+          <dd className="inline">{country.continents.join(", ")}</dd>
+        </div>
+      </dl>
     </div>
   );
 
@@ -120,40 +136,55 @@ export function CountryCard({ country }: CountryCardProps) {
           className="relative"
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
+          onFocus={() => setOpen(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              setOpen(false);
+            }
+          }}
         >
           <Link
             to="/$countryName"
             params={{ countryName: country.name.common }}
+            aria-describedby={open ? `popover-${country.cca3}` : undefined}
           >
             {cardContent}
           </Link>
         </div>
       </PopoverTrigger>
       <PopoverContent
+        id={`popover-${country.cca3}`}
         side="top"
         align="center"
+        role="tooltip"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
         <h3 className="text-white font-semibold mb-2 text-sm">
           More about {country.name.common}
         </h3>
-        <div className="space-y-1.5 text-xs">
-          <p className="text-white/80">
-            <span className="text-white/50">Capital:</span>{" "}
-            {country.capital?.join(", ") ?? "N/A"}
-          </p>
-          <p className="text-white/80">
-            <span className="text-white/50">Region:</span> {country.region}
-          </p>
-          <p className="text-white/80">
-            <span className="text-white/50">Area:</span> {formattedArea} km²
-          </p>
-          <p className="text-white/80">
-            <span className="text-white/50">Currency:</span>{" "}
-            {formatCurrencies(country.currencies)}
-          </p>
-        </div>
+        <dl className="space-y-1.5 text-xs">
+          <div>
+            <dt className="inline text-white/60">Capital:</dt>{" "}
+            <dd className="inline text-white/90">
+              {country.capital?.join(", ") ?? "N/A"}
+            </dd>
+          </div>
+          <div>
+            <dt className="inline text-white/60">Region:</dt>{" "}
+            <dd className="inline text-white/90">{country.region}</dd>
+          </div>
+          <div>
+            <dt className="inline text-white/60">Area:</dt>{" "}
+            <dd className="inline text-white/90">{formattedArea} km²</dd>
+          </div>
+          <div>
+            <dt className="inline text-white/60">Currency:</dt>{" "}
+            <dd className="inline text-white/90">
+              {formatCurrencies(country.currencies)}
+            </dd>
+          </div>
+        </dl>
       </PopoverContent>
     </Popover>
   );

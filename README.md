@@ -1,330 +1,160 @@
-Welcome to your new TanStack app!
+# Country Explorer
 
-# Getting Started
+A web application for viewing and analyzing country data from around the world.
 
-To run this application:
+## Requirements
+
+- **Bun** >= 1.0.0 ([Install Bun](https://bun.sh/docs/installation))
+
+## Getting Started
+
+### Install dependencies
 
 ```bash
 bun install
-bun --bun run dev
 ```
 
-# Building For Production
-
-To build this application for production:
+### Run development server
 
 ```bash
-bun --bun run build
+bun run dev
 ```
 
-## Testing
+The app will be available at http://localhost:5173
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+### Build for production
 
 ```bash
-bun --bun run test
+bun run build
 ```
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
+### Preview production build
 
 ```bash
-bun --bun run lint
-bun --bun run format
-bun --bun run check
+bun run preview
 ```
 
-## Routing
+## Available Scripts
 
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+| Script                | Description                |
+| --------------------- | -------------------------- |
+| `bun run dev`         | Start development server   |
+| `bun run build`       | Build for production       |
+| `bun run preview`     | Preview production build   |
+| `bun run test`        | Run unit tests (Vitest)    |
+| `bun run test:e2e`    | Run E2E tests (Playwright) |
+| `bun run test:e2e:ui` | Run E2E tests with UI      |
+| `bun run lint`        | Run linter (Biome)         |
+| `bun run format`      | Format code (Biome)        |
+| `bun run check`       | Check code (Biome)         |
 
-### Adding A Route
+## Features
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+### Core Features
 
-TanStack will automatically generate the content of the route file for you.
+- **Country Grid** - Browse countries with cards showing flag, name, population, and continent
+- **Country Details** - Click any country to see full details including map, borders, currencies, languages
+- **Search** - Filter countries by name in real-time
+- **Filters** - Filter by continent, population range, and spoken language
+- **Sorting** - Sort by name, population, or area (ascending/descending)
+- **Pagination** - Navigate through countries with 20, 50, or 100 per page
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+### Advanced Features
 
-### Adding Links
+- **Compare Countries** - Select up to 4 countries for side-by-side comparison with charts
+- **Favorites** - Save favorite countries to localStorage
+- **Export** - Download country data as CSV
+- **Share** - Share country details via Web Share API
+- **Offline Support** - PWA with service worker caching
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+## Tech Stack
 
-```tsx
-import { Link } from "@tanstack/react-router";
+| Category      | Technology          |
+| ------------- | ------------------- |
+| Framework     | React 19            |
+| Language      | TypeScript 5.9      |
+| Build Tool    | Vite 7              |
+| Routing       | TanStack Router     |
+| Data Fetching | TanStack Query      |
+| Styling       | Tailwind CSS 4      |
+| UI Components | Radix UI            |
+| Charts        | D3.js               |
+| HTTP Client   | ky                  |
+| Testing       | Vitest + Playwright |
+| Linting       | Biome               |
+
+## Project Structure
+
+```
+src/
+├── api/          # API client and query definitions
+├── components/   # React components
+├── contexts/     # React contexts (compare mode)
+├── hooks/        # Custom hooks
+├── lib/          # Utilities (favorites, export, formatting)
+├── routes/       # TanStack Router file-based routes
+└── integrations/ # Third-party integrations
 ```
 
-Then anywhere in your JSX you can use it like so:
+## Offline Support (PWA)
 
-```tsx
-<Link to="/about">About</Link>
-```
+This application is a Progressive Web App with offline caching:
 
-This will create a link that will navigate to the `/about` route.
+- **Static assets** - Precached on install
+- **REST Countries API** - StaleWhileRevalidate, cached 24 hours
+- **GeoJSON map data** - CacheFirst, cached 30 days
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+### Testing offline mode
 
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-bun install @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-bun install @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Offline Support (PWA)
-
-This application is a Progressive Web App (PWA) with offline caching support. The service worker caches:
-
-- **Static assets** (JS, CSS, HTML, images) - Precached on install
-- **REST Countries API** - StaleWhileRevalidate strategy, cached for 24 hours
-- **GeoJSON map data** - CacheFirst strategy, cached for 30 days
-
-To test offline functionality:
-
-1. Build the app: `bun --bun run build`
-2. Serve the dist folder: `npx serve dist`
+1. Build the app: `bun run build`
+2. Serve the dist folder: `bunx serve dist`
 3. Open in browser and visit some pages
 4. Go offline (DevTools > Network > Offline)
 5. Previously visited pages will still work
 
 ## Future Improvements
 
-### Enhanced Offline Storage with IndexedDB
+### User Experience
 
-The current PWA implementation uses service worker caching which works well for the application's data size (~250 countries). For more advanced offline scenarios, consider implementing IndexedDB storage:
+- **Dark/Light Theme Toggle** - User-selectable theme preference with system detection
+- **Internationalization (i18n)** - Multi-language support for UI labels
+- **Keyboard Shortcuts** - Navigate with keyboard (j/k for navigation, / for search, etc.)
+- **Recent Searches** - History of recently viewed countries
+- **Accessibility (a11y)** - Screen reader improvements, ARIA labels, focus management
 
-**When to consider this upgrade:**
+### Features
 
-- If adding user-generated content (notes, custom tags on countries)
-- If implementing offline-first sync capabilities
-- If storing large datasets like historical country statistics
-- If needing complex offline queries (e.g., "all countries I visited in 2024")
+- **Interactive World Map** - Browse countries by clicking on a world map
+- **Country Visit Tracker** - Mark countries as "visited" with dates and trip notes
+- **Travel Wishlist** - Separate list from favorites for planning future trips
+- **Country Notes** - Add personal notes and memories to countries
+- **Statistics Dashboard** - Aggregate stats (total population of favorites, countries visited by continent, etc.)
+- **Country Quiz Game** - Gamification - guess flags, capitals, populations
 
-**Implementation approach:**
+### Filters & Data
+
+- **Region/Subregion Filters** - More granular geographic filtering (e.g., Western Europe, Southeast Asia)
+- **Currency Converter** - Real-time conversion between country currencies using exchange rate API
+- **Time Zone Display** - Show current local time for each country
+- **Data Export Options** - Export to JSON, PDF in addition to CSV
+
+### Technical
+
+#### Enhanced Offline Storage with IndexedDB
+
+The current PWA implementation uses service worker caching which works well for ~250 countries. For more advanced offline scenarios, consider implementing IndexedDB:
+
+**When to consider:**
+
+- Adding user-generated content (notes, custom tags)
+- Implementing offline-first sync capabilities
+- Storing large datasets like historical statistics
+- Needing complex offline queries
+
+**Implementation:**
 
 ```bash
-npm install idb
+bun add idb
 ```
 
 ```typescript
@@ -338,24 +168,14 @@ const db = await openDB("country-explorer", 1, {
   },
 });
 
-// Cache full country details for offline access
 export const cacheCountry = (country: Country) => db.put("countries", country);
 export const getOfflineCountry = (cca3: string) => db.get("countries", cca3);
 ```
 
-**Benefits over current approach:**
+## API
 
-- No 5MB localStorage limit (IndexedDB can store GBs)
-- Structured queries with indexes
-- Better performance for large datasets
-- Transaction support for data integrity
+This app uses the [REST Countries API](https://restcountries.com/) for country data.
 
-**Trade-offs:**
+## License
 
-- Additional complexity in data sync logic
-- Need to handle IndexedDB ↔ TanStack Query cache synchronization
-- More code to test and maintain
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+MIT
