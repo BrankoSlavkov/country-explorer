@@ -12,3 +12,4 @@ count.txt
 coverage/
 test-results/
 playwright-report/
+debug-screenshot.png
