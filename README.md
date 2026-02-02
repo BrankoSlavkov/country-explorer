@@ -1,4 +1,4 @@
-Welcome to your new TanStack app! 
+Welcome to your new TanStack app!
 
 # Getting Started
 
@@ -29,11 +29,9 @@ bun --bun run test
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
-
 ## Linting & Formatting
 
 This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
 
 ```bash
 bun --bun run lint
@@ -41,9 +39,8 @@ bun --bun run format
 bun --bun run check
 ```
 
-
-
 ## Routing
+
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 
 ### Adding A Route
@@ -79,8 +76,8 @@ In the File Based Routing setup the layout is located in `src/routes/__root.tsx`
 Here is an example layout that includes a header:
 
 ```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { Link } from "@tanstack/react-router";
 
@@ -97,13 +94,12 @@ export const Route = createRootRoute({
       <TanStackRouterDevtools />
     </>
   ),
-})
+});
 ```
 
 The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
 
 More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
 
 ## Data Fetching
 
@@ -165,7 +161,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 }
 ```
@@ -295,6 +291,70 @@ You can find out everything you need to know on how to use TanStack Store in the
 # Demo files
 
 Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+
+# Offline Support (PWA)
+
+This application is a Progressive Web App (PWA) with offline caching support. The service worker caches:
+
+- **Static assets** (JS, CSS, HTML, images) - Precached on install
+- **REST Countries API** - StaleWhileRevalidate strategy, cached for 24 hours
+- **GeoJSON map data** - CacheFirst strategy, cached for 30 days
+
+To test offline functionality:
+
+1. Build the app: `bun --bun run build`
+2. Serve the dist folder: `npx serve dist`
+3. Open in browser and visit some pages
+4. Go offline (DevTools > Network > Offline)
+5. Previously visited pages will still work
+
+## Future Improvements
+
+### Enhanced Offline Storage with IndexedDB
+
+The current PWA implementation uses service worker caching which works well for the application's data size (~250 countries). For more advanced offline scenarios, consider implementing IndexedDB storage:
+
+**When to consider this upgrade:**
+
+- If adding user-generated content (notes, custom tags on countries)
+- If implementing offline-first sync capabilities
+- If storing large datasets like historical country statistics
+- If needing complex offline queries (e.g., "all countries I visited in 2024")
+
+**Implementation approach:**
+
+```bash
+npm install idb
+```
+
+```typescript
+// src/lib/offline-db.ts
+import { openDB } from "idb";
+
+const db = await openDB("country-explorer", 1, {
+  upgrade(db) {
+    db.createObjectStore("countries", { keyPath: "cca3" });
+    db.createObjectStore("visits", { keyPath: "id", autoIncrement: true });
+  },
+});
+
+// Cache full country details for offline access
+export const cacheCountry = (country: Country) => db.put("countries", country);
+export const getOfflineCountry = (cca3: string) => db.get("countries", cca3);
+```
+
+**Benefits over current approach:**
+
+- No 5MB localStorage limit (IndexedDB can store GBs)
+- Structured queries with indexes
+- Better performance for large datasets
+- Transaction support for data integrity
+
+**Trade-offs:**
+
+- Additional complexity in data sync logic
+- Need to handle IndexedDB ↔ TanStack Query cache synchronization
+- More code to test and maintain
 
 # Learn More
 
