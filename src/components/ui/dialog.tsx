@@ -35,6 +35,8 @@ export function DialogContent({
 }: DialogContentProps) {
   return (
     <div
+      role="dialog"
+      aria-modal="true"
       className={cn(
         "relative bg-white rounded-lg shadow-xl max-h-[90vh] overflow-auto",
         className,
