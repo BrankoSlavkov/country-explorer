@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Suspense, useRef } from "react";
+import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { countryQueries } from "~/api/countries.queries";
 import type { Country } from "~/api/countries.types";
@@ -17,7 +17,6 @@ interface CountryDetailsPageProps {
 
 export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
   const { data: country } = useQuery(countryQueries.detail(countryName));
-  const detailsRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
@@ -36,7 +35,7 @@ export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
             ← Back to Countries
           </Link>
           <div className="flex items-center gap-2">
-            <ExportButton country={country} detailsRef={detailsRef} />
+            <ExportButton country={country} />
             <ShareButton title={countryName} />
             <FavoriteButton countryCode={country?.cca3} />
           </div>
@@ -53,7 +52,7 @@ export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
           }
         >
           <Suspense fallback={<CountryDetailsSkeleton />}>
-            <CountryDetails countryName={countryName} ref={detailsRef} />
+            <CountryDetails countryName={countryName} />
           </Suspense>
         </ErrorBoundary>
       </main>
