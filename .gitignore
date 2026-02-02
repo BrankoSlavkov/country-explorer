@@ -10,3 +10,5 @@ count.txt
 .wrangler
 
 coverage/
+test-results/
+playwright-report/

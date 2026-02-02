@@ -1,50 +1,31 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Favorites", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
-    // Wait for countries to load
-    await page.waitForSelector("h2", { timeout: 10000 });
+test("favorites page shows empty state and populates with favorites", async ({
+  page,
+}) => {
+  // 1. Go directly to favorites page with no favorites
+  await page.goto("/favorites");
+  await expect(page.getByText(/No favorites yet/i)).toBeVisible();
+  await expect(page.getByText(/clicking the heart icon/i)).toBeVisible();
+
+  // 2. Click the link to go explore
+  await page.getByRole("link", { name: /Browse Countries/i }).click();
+  await expect(page).toHaveURL("/");
+
+  // 3. Add a country to favorites
+  const countryCard = page.locator("a").filter({
+    has: page.getByRole("heading", { name: "Afghanistan" }),
   });
+  await countryCard.locator("button").click();
+  await expect(page.getByText(/Favorites \(1\)/i)).toBeVisible();
 
-  test("adds country to favorites and updates count", async ({ page }) => {
-    await expect(page.getByText(/Favorites \(0\)/i)).toBeVisible();
+  // 4. Navigate to favorites page
+  await page.getByRole("link", { name: /Favorites/i }).click();
+  await expect(page).toHaveURL("/favorites");
 
-    // Click the heart button on the Afghanistan card (first country alphabetically)
-    const afghanistanCard = page.locator("a", {
-      has: page.getByRole("heading", { name: "Afghanistan" }),
-    });
-    await afghanistanCard.locator("button").click();
-
-    await expect(page.getByText(/Favorites \(1\)/i)).toBeVisible();
-  });
-
-  test("persists favorites across page reloads", async ({ page }) => {
-    const afghanistanCard = page.locator("a", {
-      has: page.getByRole("heading", { name: "Afghanistan" }),
-    });
-    await afghanistanCard.locator("button").click();
-
-    await page.reload();
-    await page.waitForSelector("h2", { timeout: 10000 });
-
-    await expect(page.getByText(/Favorites \(1\)/i)).toBeVisible();
-  });
-
-  test("navigates to favorites page", async ({ page }) => {
-    const afghanistanCard = page.locator("a", {
-      has: page.getByRole("heading", { name: "Afghanistan" }),
-    });
-    await afghanistanCard.locator("button").click();
-
-    await page.getByRole("link", { name: /Favorites/i }).click();
-
-    await expect(page).toHaveURL("/favorites");
-    await page.waitForSelector("h2", { timeout: 10000 });
-    await expect(
-      page.getByRole("heading", { name: "Afghanistan" }),
-    ).toBeVisible();
-  });
+  // 5. Verify favorite is displayed
+  await expect(
+    page.getByRole("heading", { name: "Afghanistan" }),
+  ).toBeVisible();
+  await expect(page.getByText(/No favorites yet/i)).not.toBeVisible();
 });

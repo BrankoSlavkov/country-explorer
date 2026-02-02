@@ -8,9 +8,15 @@ import { createMockCountry } from "~/test-utils";
 import { CountryCard } from "../country-card";
 
 vi.mock("@tanstack/react-router", () => ({
-  Link: ({ children, to }: { children: ReactNode; to: string }) => (
-    <a href={to}>{children}</a>
-  ),
+  Link: ({
+    children,
+    to,
+    params,
+  }: {
+    children: ReactNode;
+    to: string;
+    params?: { countryName: string };
+  }) => <a href={params ? `/${params.countryName}` : to}>{children}</a>,
 }));
 
 function renderWithCompare(ui: React.ReactElement) {
@@ -39,10 +45,10 @@ describe("CountryCard", () => {
     expect(screen.getByText("Oceania")).toBeInTheDocument();
   });
 
-  it("links to country detail page", () => {
+  it("links to country detail page with correct URL", () => {
     renderWithCompare(<CountryCard country={mockCountry} />);
 
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/$countryName");
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/Australia");
   });
 
   it("toggles favorite and persists to localStorage", async () => {

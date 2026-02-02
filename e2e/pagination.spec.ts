@@ -1,23 +1,24 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Pagination", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-    // Wait for countries to load
-    await page.waitForSelector("h2", { timeout: 10000 });
-  });
+test("pagination and URL persistence", async ({ page }) => {
+  // 1. Load app
+  await page.goto("/");
 
-  test("navigates between pages", async ({ page }) => {
-    await page.getByRole("button", { name: /Next/i }).click();
-    await expect(page).toHaveURL(/page=2/);
+  // 2. Navigate to page 2
+  await page.getByRole("button", { name: /Next/i }).click();
+  await expect(page).toHaveURL(/page=2/);
 
-    await page.getByRole("button", { name: /Previous/i }).click();
-    await expect(page).toHaveURL(/page=1/);
-  });
+  // 3. Change items per page
+  await page.locator("select").filter({ hasText: "20" }).selectOption("50");
+  await expect(page).toHaveURL(/perPage=50/);
+  // Should reset to page 1 when changing perPage
+  await expect(page).toHaveURL(/page=1/);
 
-  test("changes items per page", async ({ page }) => {
-    await page.locator("select").filter({ hasText: "20" }).selectOption("50");
+  // 4. Apply a filter and verify URL contains all params
+  await page.locator("#filter-continent").selectOption("Europe");
+  await expect(page).toHaveURL(/continent=Europe/);
 
-    await expect(page).toHaveURL(/perPage=50/);
-  });
+  // 5. Reload and verify state persists
+  await page.reload();
+  await expect(page.locator("#filter-continent")).toHaveValue("Europe");
 });
