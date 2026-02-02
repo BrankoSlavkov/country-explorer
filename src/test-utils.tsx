@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type RenderOptions, render } from "@testing-library/react";
-import type { PropsWithChildren, ReactElement, ReactNode } from "react";
+import type { PropsWithChildren, ReactElement } from "react";
 import type { CountryCard } from "~/api/countries.types";
 import { CompareProvider } from "~/contexts/compare-context";
 

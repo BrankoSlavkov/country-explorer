@@ -7,6 +7,7 @@ const vitestConfig = defineConfig({
   test: {
     environment: "happy-dom",
     setupFiles: ["test-setup.ts"],
+    exclude: ["node_modules", "e2e/**"],
     bail: process.env.CI ? 1 : 0,
     coverage: {
       enabled: true,
