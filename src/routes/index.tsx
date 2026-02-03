@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
             <h1 className="text-3xl font-bold text-white text-center px-8 flex items-center justify-center gap-3">
               <img
                 src="/favicon.png"
-                alt=""
+                alt="Country Explorer"
                 aria-hidden="true"
                 className="w-8 h-8 sm:w-10 sm:h-10"
               />

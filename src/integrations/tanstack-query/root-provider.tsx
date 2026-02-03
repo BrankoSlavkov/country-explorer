@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// Singleton QueryClient to persist across HMR
 let queryClient: QueryClient | null = null;
 
 function getQueryClient() {
