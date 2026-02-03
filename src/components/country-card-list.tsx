@@ -1,16 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { GitCompare, Heart } from "lucide-react";
 import { useState } from "react";
-import { CountryCard } from "~/components/country-card";
 import { CountryCardListSkeleton } from "~/components/country-card-list-skeleton";
 import { CountryCompareModal } from "~/components/country-compare-modal";
 import { CountryFilters } from "~/components/country-filters";
+import { CountryGrid } from "~/components/country-grid";
 import { CountryPagination } from "~/components/country-pagination";
 import { useCompare } from "~/contexts/compare-context";
+import { FilteredCountriesProvider } from "~/contexts/filtered-countries-context";
 import { useCountries } from "~/hooks/use-countries";
-import { useCountryFiltering } from "~/hooks/use-country-filtering";
 import { useCountrySearchParams } from "~/hooks/use-country-search-params";
 import { useFavorites } from "~/hooks/use-favorites";
+import { cn } from "~/lib/cn";
 
 export function CountryCardList() {
   const {
@@ -25,20 +26,8 @@ export function CountryCardList() {
   const { countries, isLoading, continents, languages } = useCountries();
   const { compareMode, toggleCompareMode, selectedCountries, removeCountry } =
     useCompare();
-  const { isFavorite, favoritesCount } = useFavorites();
+  const { favorites, favoritesCount } = useFavorites();
   const [showCompareModal, setShowCompareModal] = useState(false);
-
-  const { paginatedCountries } = useCountryFiltering({
-    countries,
-    search,
-    sortBy,
-    populationFilter,
-    continent,
-    language,
-    isFavorite,
-    page,
-    perPage,
-  });
 
   if (isLoading) {
     return (
@@ -54,7 +43,17 @@ export function CountryCardList() {
   }
 
   return (
-    <>
+    <FilteredCountriesProvider
+      countries={countries}
+      search={search}
+      sortBy={sortBy}
+      populationFilter={populationFilter}
+      continent={continent}
+      language={language}
+      favorites={favorites}
+      page={page}
+      perPage={perPage}
+    >
       <div
         className="sticky top-0 z-10 pb-6"
         style={{
@@ -81,20 +80,22 @@ export function CountryCardList() {
                 ? "Exit compare mode"
                 : "Enter compare mode to select countries for comparison"
             }
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-              compareMode
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
+            className={cn(
+              "flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all text-white",
+              {
+                "bg-blue-600 hover:bg-blue-700": compareMode,
+                "bg-blue-500 hover:bg-blue-600": !compareMode,
+              },
+            )}
           >
             <GitCompare aria-hidden="true" className="w-5 h-5" />
             {compareMode ? "Exit Compare Mode" : "Compare Mode"}
             {compareMode && selectedCountries.length > 0 && (
-              <span
-                className="bg-white text-blue-600 px-2 py-0.5 rounded-full text-sm font-bold"
-                aria-label={`${selectedCountries.length} countries selected`}
-              >
-                {selectedCountries.length}
+              <span className="bg-white text-blue-600 px-2 py-0.5 rounded-full text-sm font-bold">
+                <span className="sr-only">
+                  {selectedCountries.length} countries selected
+                </span>
+                <span aria-hidden="true">{selectedCountries.length}</span>
               </span>
             )}
           </button>
@@ -114,25 +115,9 @@ export function CountryCardList() {
         <CountryFilters continents={continents} languages={languages} />
       </div>
 
-      <section aria-label="Countries list" className="mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {paginatedCountries.map((country) => (
-            <CountryCard key={country.name.common} country={country} />
-          ))}
-        </div>
-      </section>
+      <CountryGrid />
 
-      <CountryPagination
-        countries={countries}
-        search={search}
-        sortBy={sortBy}
-        populationFilter={populationFilter}
-        continent={continent}
-        language={language}
-        isFavorite={isFavorite}
-        page={page}
-        perPage={perPage}
-      />
+      <CountryPagination />
 
       <CountryCompareModal
         open={showCompareModal}
@@ -140,6 +125,6 @@ export function CountryCardList() {
         countries={selectedCountries}
         onRemoveCountry={removeCountry}
       />
-    </>
+    </FilteredCountriesProvider>
   );
 }

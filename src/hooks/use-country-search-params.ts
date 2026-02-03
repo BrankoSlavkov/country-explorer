@@ -1,5 +1,4 @@
-import { DEFAULT_POPULATION_FILTER } from "~/components/country-population-filter";
-import { DEFAULT_SORT } from "~/components/country-sort";
+import { DEFAULT_POPULATION_FILTER, DEFAULT_SORT } from "~/constants/filters";
 import { Route } from "~/routes/index";
 
 export function useCountrySearchParams() {

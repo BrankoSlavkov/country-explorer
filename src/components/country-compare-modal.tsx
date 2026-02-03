@@ -155,14 +155,13 @@ export function CountryCompareModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="w-[95vw] max-w-[1200px]"
+        className="w-[95vw] max-w-300"
         onClose={() => onOpenChange(false)}
       >
         <DialogHeader>
           <DialogTitle>Compare Countries ({countries.length})</DialogTitle>
         </DialogHeader>
         <DialogBody className="max-h-[80vh] overflow-y-auto">
-          {/* Country Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {countries.map((country, i) => (
               <div
@@ -267,7 +266,6 @@ export function CountryCompareModal({
             ))}
           </div>
 
-          {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <figure className="bg-gray-50 p-6 rounded-lg">
               <figcaption className="text-lg font-semibold mb-4 text-gray-900">

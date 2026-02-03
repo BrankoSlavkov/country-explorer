@@ -1,10 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_POPULATION_FILTER, DEFAULT_SORT } from "~/constants/filters";
+import { FilteredCountriesProvider } from "~/contexts/filtered-countries-context";
 import { createMockCountries, createMockCountry } from "~/test-utils";
 import { CountryPagination } from "../country-pagination";
 
 const mockNavigate = vi.fn();
+let mockSearchParams = { page: 1, perPage: 3 };
 
 vi.mock("@tanstack/react-router", async (importOriginal) => {
   const actual =
@@ -16,33 +19,58 @@ vi.mock("@tanstack/react-router", async (importOriginal) => {
   };
 });
 
+vi.mock("~/hooks/use-country-search-params", () => ({
+  useCountrySearchParams: () => mockSearchParams,
+}));
+
+interface WrapperProps {
+  countries: ReturnType<typeof createMockCountries>;
+  page?: number;
+  perPage?: number;
+  favorites?: Record<string, boolean>;
+}
+
+function renderWithProvider({
+  countries,
+  page = 1,
+  perPage = 3,
+  favorites = {},
+}: WrapperProps) {
+  mockSearchParams = { page, perPage };
+  return render(
+    <FilteredCountriesProvider
+      countries={countries}
+      search={undefined}
+      sortBy={DEFAULT_SORT}
+      populationFilter={DEFAULT_POPULATION_FILTER}
+      continent={undefined}
+      language={undefined}
+      favorites={favorites}
+      page={page}
+      perPage={perPage}
+    >
+      <CountryPagination />
+    </FilteredCountriesProvider>,
+  );
+}
+
 describe("CountryPagination", () => {
   const mockCountries = createMockCountries();
-  const defaultProps = {
-    countries: mockCountries,
-    search: undefined,
-    sortBy: "name-asc" as const,
-    populationFilter: "all" as const,
-    continent: undefined,
-    language: undefined,
-    isFavorite: () => false,
-    page: 1,
-    perPage: 3,
-  };
 
   beforeEach(() => {
     mockNavigate.mockClear();
   });
 
   it("returns null when only one page exists", () => {
-    const { container } = render(
-      <CountryPagination {...defaultProps} perPage={100} />,
-    );
+    const { container } = renderWithProvider({
+      countries: mockCountries,
+      perPage: 100,
+    });
     expect(container.firstChild).toBeNull();
   });
 
   it("displays page numbers and navigation buttons", () => {
-    render(<CountryPagination {...defaultProps} />);
+    renderWithProvider({ countries: mockCountries });
 
     expect(screen.getByText("1")).toBeInTheDocument();
     expect(screen.getByText("2")).toBeInTheDocument();
@@ -51,17 +79,19 @@ describe("CountryPagination", () => {
   });
 
   it("disables previous button on first page and next on last page", () => {
-    const { rerender } = render(
-      <CountryPagination {...defaultProps} page={1} />,
-    );
+    const { unmount } = renderWithProvider({
+      countries: mockCountries,
+      page: 1,
+    });
     expect(screen.getByLabelText("Go to previous page")).toBeDisabled();
+    unmount();
 
-    rerender(<CountryPagination {...defaultProps} page={3} />);
+    renderWithProvider({ countries: mockCountries, page: 3 });
     expect(screen.getByLabelText("Go to next page")).toBeDisabled();
   });
 
   it("shows correct item range", () => {
-    render(<CountryPagination {...defaultProps} page={1} />);
+    renderWithProvider({ countries: mockCountries, page: 1 });
     expect(
       screen.getByText(/Showing 1 to 3 of 7 countries/),
     ).toBeInTheDocument();
@@ -69,7 +99,7 @@ describe("CountryPagination", () => {
 
   it("navigates when page number is clicked", async () => {
     const user = userEvent.setup();
-    render(<CountryPagination {...defaultProps} />);
+    renderWithProvider({ countries: mockCountries });
 
     await user.click(screen.getByText("2"));
     expect(mockNavigate).toHaveBeenCalled();
@@ -77,7 +107,7 @@ describe("CountryPagination", () => {
 
   it("resets to page 1 when per-page changes", async () => {
     const user = userEvent.setup();
-    render(<CountryPagination {...defaultProps} page={2} />);
+    renderWithProvider({ countries: mockCountries, page: 2 });
 
     await user.selectOptions(screen.getByRole("combobox"), "50");
 
@@ -93,14 +123,11 @@ describe("CountryPagination", () => {
       }),
     );
 
-    render(
-      <CountryPagination
-        {...defaultProps}
-        countries={manyCountries}
-        perPage={5}
-        page={5}
-      />,
-    );
+    renderWithProvider({
+      countries: manyCountries,
+      perPage: 5,
+      page: 5,
+    });
 
     expect(screen.getAllByText("More pages").length).toBeGreaterThan(0);
   });

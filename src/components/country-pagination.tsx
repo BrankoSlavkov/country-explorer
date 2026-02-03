@@ -1,7 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import type { CountryCard } from "~/api/countries.queries";
-import type { PopulationFilter } from "~/components/country-population-filter";
-import type { SortOption } from "~/components/country-sort";
 import {
   Pagination,
   PaginationContent,
@@ -11,44 +8,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
-import { useCountryFiltering } from "~/hooks/use-country-filtering";
+import { useFilteredCountries } from "~/contexts/filtered-countries-context";
+import { useCountrySearchParams } from "~/hooks/use-country-search-params";
 
-interface CountryPaginationProps {
-  countries: CountryCard[] | undefined;
-  search?: string;
-  sortBy: SortOption;
-  populationFilter: PopulationFilter;
-  continent?: string;
-  language?: string;
-  isFavorite: (cca3: string) => boolean;
-  page: number;
-  perPage: number;
-}
-
-export function CountryPagination({
-  countries,
-  search,
-  sortBy,
-  populationFilter,
-  continent,
-  language,
-  isFavorite,
-  page,
-  perPage,
-}: CountryPaginationProps) {
+export function CountryPagination() {
   const navigate = useNavigate({ from: "/" });
-
-  const { filteredCountries, totalPages } = useCountryFiltering({
-    countries,
-    search,
-    sortBy,
-    populationFilter,
-    continent,
-    language,
-    isFavorite,
-    page,
-    perPage,
-  });
+  const { page, perPage } = useCountrySearchParams();
+  const { totalPages, totalCount } = useFilteredCountries();
 
   const handlePageChange = (newPage: number) => {
     navigate({ search: (prev) => ({ ...prev, page: newPage }) });
@@ -98,7 +64,7 @@ export function CountryPagination({
   }
 
   const startItem = (page - 1) * perPage + 1;
-  const endItem = Math.min(page * perPage, filteredCountries.length);
+  const endItem = Math.min(page * perPage, totalCount);
 
   return (
     <nav
@@ -161,7 +127,7 @@ export function CountryPagination({
       </Pagination>
 
       <p className="text-white/80 text-sm" aria-live="polite">
-        Showing {startItem} to {endItem} of {filteredCountries.length} countries
+        Showing {startItem} to {endItem} of {totalCount} countries
       </p>
     </nav>
   );
