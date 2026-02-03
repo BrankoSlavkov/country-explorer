@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { X } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import type { CountryCard } from "~/api/countries.queries";
 import {
   Dialog,
@@ -32,15 +32,102 @@ function formatCurrencies(currencies: CountryCard["currencies"]): string {
 
 const COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f59e0b"];
 
+interface BarChartData {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface BarChartProps {
+  data: BarChartData[];
+  width?: number;
+  valueFormatter: (value: number) => string;
+  unit?: string;
+  ariaLabel: string;
+}
+
+function BarChart({
+  data,
+  width = 500,
+  valueFormatter,
+  unit = "",
+  ariaLabel,
+}: BarChartProps) {
+  const margin = { top: 20, right: 120, bottom: 20, left: 150 };
+  const height = data.length * 60 + 40;
+
+  const xScale = useMemo(
+    () =>
+      d3
+        .scaleLinear()
+        .domain([0, d3.max(data, (d) => d.value) || 0])
+        .range([margin.left, width - margin.right]),
+    [data, width],
+  );
+
+  const yScale = useMemo(
+    () =>
+      d3
+        .scaleBand()
+        .domain(data.map((d) => d.name))
+        .range([margin.top, height - margin.bottom])
+        .padding(0.2),
+    [data, height],
+  );
+
+  return (
+    <svg width={width} height={height} role="img" aria-label={ariaLabel}>
+      {data.map((item) => {
+        const y = yScale(item.name) ?? 0;
+        const barWidth = xScale(item.value) - margin.left;
+        const bandwidth = yScale.bandwidth();
+
+        return (
+          <g key={item.name}>
+            <rect
+              x={margin.left}
+              y={y}
+              width={barWidth}
+              height={bandwidth}
+              fill={item.color}
+              rx={4}
+            />
+            <text
+              x={margin.left - 10}
+              y={y + bandwidth / 2}
+              textAnchor="end"
+              dominantBaseline="middle"
+              fill="#374151"
+              fontWeight="600"
+              fontSize="14px"
+            >
+              {item.name}
+            </text>
+            <text
+              x={xScale(item.value) + 10}
+              y={y + bandwidth / 2}
+              textAnchor="start"
+              dominantBaseline="middle"
+              fill="#374151"
+              fontWeight="600"
+              fontSize="13px"
+            >
+              {valueFormatter(item.value)}
+              {unit}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export function CountryCompareModal({
   open,
   onOpenChange,
   countries,
   onRemoveCountry,
 }: CountryCompareModalProps) {
-  const populationChartRef = useRef<SVGSVGElement>(null);
-  const areaChartRef = useRef<SVGSVGElement>(null);
-
   const populationData = useMemo(
     () =>
       countries
@@ -64,140 +151,6 @@ export function CountryCompareModal({
         .sort((a, b) => b.value - a.value),
     [countries],
   );
-
-  // Population Bar Chart
-  useEffect(() => {
-    if (!open || !populationChartRef.current || countries.length === 0) return;
-
-    const svg = d3.select(populationChartRef.current);
-    svg.selectAll("*").remove();
-
-    const width = 500;
-    const height = countries.length * 60 + 40;
-    const margin = { top: 20, right: 120, bottom: 20, left: 150 };
-
-    const x = d3
-      .scaleLinear()
-      .domain([0, d3.max(populationData, (d) => d.value) || 0])
-      .range([margin.left, width - margin.right]);
-
-    const y = d3
-      .scaleBand()
-      .domain(populationData.map((d) => d.name))
-      .range([margin.top, height - margin.bottom])
-      .padding(0.2);
-
-    // Bars
-    svg
-      .selectAll("rect")
-      .data(populationData)
-      .join("rect")
-      .attr("x", margin.left)
-      .attr("y", (d) => y(d.name) || 0)
-      .attr("width", (d) => x(d.value) - margin.left)
-      .attr("height", y.bandwidth())
-      .attr("fill", (d) => d.color)
-      .attr("rx", 4);
-
-    // Country names
-    svg
-      .selectAll(".label-name")
-      .data(populationData)
-      .join("text")
-      .attr("class", "label-name")
-      .attr("x", margin.left - 10)
-      .attr("y", (d) => (y(d.name) || 0) + y.bandwidth() / 2)
-      .attr("text-anchor", "end")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "#374151")
-      .attr("font-weight", "600")
-      .attr("font-size", "14px")
-      .text((d) => d.name);
-
-    // Values
-    svg
-      .selectAll(".label-value")
-      .data(populationData)
-      .join("text")
-      .attr("class", "label-value")
-      .attr("x", (d) => x(d.value) + 10)
-      .attr("y", (d) => (y(d.name) || 0) + y.bandwidth() / 2)
-      .attr("text-anchor", "start")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "#374151")
-      .attr("font-weight", "600")
-      .attr("font-size", "13px")
-      .text((d) => formatStatistic(d.value));
-
-    svg.attr("height", height);
-  }, [open, populationData, countries.length]);
-
-  // Area Bar Chart
-  useEffect(() => {
-    if (!open || !areaChartRef.current || countries.length === 0) return;
-
-    const svg = d3.select(areaChartRef.current);
-    svg.selectAll("*").remove();
-
-    const width = 500;
-    const height = countries.length * 60 + 40;
-    const margin = { top: 20, right: 120, bottom: 20, left: 150 };
-
-    const x = d3
-      .scaleLinear()
-      .domain([0, d3.max(areaData, (d) => d.value) || 0])
-      .range([margin.left, width - margin.right]);
-
-    const y = d3
-      .scaleBand()
-      .domain(areaData.map((d) => d.name))
-      .range([margin.top, height - margin.bottom])
-      .padding(0.2);
-
-    // Bars
-    svg
-      .selectAll("rect")
-      .data(areaData)
-      .join("rect")
-      .attr("x", margin.left)
-      .attr("y", (d) => y(d.name) || 0)
-      .attr("width", (d) => x(d.value) - margin.left)
-      .attr("height", y.bandwidth())
-      .attr("fill", (d) => d.color)
-      .attr("rx", 4);
-
-    // Country names
-    svg
-      .selectAll(".label-name")
-      .data(areaData)
-      .join("text")
-      .attr("class", "label-name")
-      .attr("x", margin.left - 10)
-      .attr("y", (d) => (y(d.name) || 0) + y.bandwidth() / 2)
-      .attr("text-anchor", "end")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "#374151")
-      .attr("font-weight", "600")
-      .attr("font-size", "14px")
-      .text((d) => d.name);
-
-    // Values
-    svg
-      .selectAll(".label-value")
-      .data(areaData)
-      .join("text")
-      .attr("class", "label-value")
-      .attr("x", (d) => x(d.value) + 10)
-      .attr("y", (d) => (y(d.name) || 0) + y.bandwidth() / 2)
-      .attr("text-anchor", "start")
-      .attr("dominant-baseline", "middle")
-      .attr("fill", "#374151")
-      .attr("font-weight", "600")
-      .attr("font-size", "13px")
-      .text((d) => `${formatStatistic(d.value)} km²`);
-
-    svg.attr("height", height);
-  }, [open, areaData, countries.length]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -321,11 +274,10 @@ export function CountryCompareModal({
                 Population Comparison
               </figcaption>
               <div className="flex justify-center overflow-x-auto">
-                <svg
-                  ref={populationChartRef}
-                  width="500"
-                  role="img"
-                  aria-label={`Bar chart comparing population: ${populationData.map((d) => `${d.name}: ${formatStatistic(d.value)}`).join(", ")}`}
+                <BarChart
+                  data={populationData}
+                  valueFormatter={formatStatistic}
+                  ariaLabel={`Bar chart comparing population: ${populationData.map((d) => `${d.name}: ${formatStatistic(d.value)}`).join(", ")}`}
                 />
               </div>
             </figure>
@@ -335,11 +287,11 @@ export function CountryCompareModal({
                 Area Comparison
               </figcaption>
               <div className="flex justify-center overflow-x-auto">
-                <svg
-                  ref={areaChartRef}
-                  width="500"
-                  role="img"
-                  aria-label={`Bar chart comparing area: ${areaData.map((d) => `${d.name}: ${formatStatistic(d.value)} km²`).join(", ")}`}
+                <BarChart
+                  data={areaData}
+                  valueFormatter={formatStatistic}
+                  unit=" km²"
+                  ariaLabel={`Bar chart comparing area: ${areaData.map((d) => `${d.name}: ${formatStatistic(d.value)} km²`).join(", ")}`}
                 />
               </div>
             </figure>

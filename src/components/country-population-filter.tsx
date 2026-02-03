@@ -2,12 +2,26 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { Route } from "~/routes/index";
 
+const POPULATION_SMALL_MAX = 1_000_000;
+const POPULATION_MEDIUM_MAX = 10_000_000;
+const POPULATION_LARGE_MAX = 50_000_000;
+
 export const POPULATION_FILTERS = [
   { value: "all", label: "All Populations" },
-  { value: "small", label: "< 1M", min: 0, max: 1_000_000 },
-  { value: "medium", label: "1M - 10M", min: 1_000_000, max: 10_000_000 },
-  { value: "large", label: "10M - 50M", min: 10_000_000, max: 50_000_000 },
-  { value: "huge", label: "> 50M", min: 50_000_000, max: Infinity },
+  { value: "small", label: "< 1M", min: 0, max: POPULATION_SMALL_MAX },
+  {
+    value: "medium",
+    label: "1M - 10M",
+    min: POPULATION_SMALL_MAX,
+    max: POPULATION_MEDIUM_MAX,
+  },
+  {
+    value: "large",
+    label: "10M - 50M",
+    min: POPULATION_MEDIUM_MAX,
+    max: POPULATION_LARGE_MAX,
+  },
+  { value: "huge", label: "> 50M", min: POPULATION_LARGE_MAX, max: Infinity },
 ] as const;
 
 export type PopulationFilter = (typeof POPULATION_FILTERS)[number]["value"];

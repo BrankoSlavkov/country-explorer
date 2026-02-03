@@ -26,4 +26,5 @@ export const ERROR_VARIANTS: Record<ErrorVariant, ErrorVariantValue> = {
 export type ErrorStateProps = {
   message: string;
   variant?: ErrorVariant;
+  onRetry?: () => void;
 };

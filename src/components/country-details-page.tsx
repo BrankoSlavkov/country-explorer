@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -17,6 +17,7 @@ interface CountryDetailsPageProps {
 
 export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
   const { data: country } = useQuery(countryQueries.detail(countryName));
+  const { reset } = useQueryErrorResetBoundary();
 
   return (
     <div
@@ -44,12 +45,14 @@ export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         <ErrorBoundary
-          fallback={
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
             <ErrorState
               variant="not-found"
               message={`We couldn't find a country named "${countryName}". Please check the spelling and try again.`}
+              onRetry={resetErrorBoundary}
             />
-          }
+          )}
         >
           <Suspense fallback={<CountryDetailsSkeleton />}>
             <CountryDetails countryName={countryName} />
