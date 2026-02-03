@@ -20,13 +20,7 @@ export function CountryDetailsPage({ countryName }: CountryDetailsPageProps) {
   const { reset } = useQueryErrorResetBoundary();
 
   return (
-    <div
-      className="min-h-screen text-white"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle at 30% 20%, #1a1a2e 0%, #0d0d1a 100%)",
-      }}
-    >
+    <div className="min-h-screen text-white bg-app">
       <header className="sticky top-0 z-10 backdrop-blur-md bg-black/30 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link

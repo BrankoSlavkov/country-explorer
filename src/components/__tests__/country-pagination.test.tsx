@@ -92,9 +92,7 @@ describe("CountryPagination", () => {
 
   it("shows correct item range", () => {
     renderWithProvider({ countries: mockCountries, page: 1 });
-    expect(
-      screen.getByText(/Showing 1 to 3 of 7 countries/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Showing 1-3 of 7/)).toBeInTheDocument();
   });
 
   it("navigates when page number is clicked", async () => {

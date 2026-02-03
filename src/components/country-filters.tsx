@@ -19,7 +19,7 @@ export function CountryFilters({
   const { search, setSearch } = useSearchParam();
 
   return (
-    <search className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-6 px-8 mb-8 max-w-7xl mx-auto">
+    <search className="rounded-xl backdrop-blur-md bg-black/50 border border-white/20 p-4 sm:p-6 sm:px-8 mb-8 max-w-7xl mx-4 sm:mx-auto">
       <div className="mb-6">
         <label
           htmlFor="search-country"

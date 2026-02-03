@@ -74,21 +74,17 @@ describe("exportToCSV", () => {
 
   let clickedLink: HTMLAnchorElement | null = null;
   let createdBlobUrl: string | null = null;
-  let revokedUrl: string | null = null;
 
   beforeEach(() => {
     clickedLink = null;
     createdBlobUrl = null;
-    revokedUrl = null;
 
     vi.spyOn(URL, "createObjectURL").mockImplementation((blob) => {
-      createdBlobUrl = `blob:${blob.type}`;
+      createdBlobUrl = `blob:${(blob as Blob).type}`;
       return createdBlobUrl;
     });
 
-    vi.spyOn(URL, "revokeObjectURL").mockImplementation((url) => {
-      revokedUrl = url;
-    });
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
 
     vi.spyOn(document, "createElement").mockImplementation((tag) => {
       if (tag === "a") {

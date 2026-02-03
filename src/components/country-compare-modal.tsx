@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { X } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CountryCard } from "~/api/countries.queries";
 import {
   Dialog,
@@ -40,7 +40,6 @@ interface BarChartData {
 
 interface BarChartProps {
   data: BarChartData[];
-  width?: number;
   valueFormatter: (value: number) => string;
   unit?: string;
   ariaLabel: string;
@@ -48,12 +47,35 @@ interface BarChartProps {
 
 function BarChart({
   data,
-  width = 500,
   valueFormatter,
   unit = "",
   ariaLabel,
 }: BarChartProps) {
-  const margin = { top: 20, right: 120, bottom: 20, left: 150 };
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(400);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        setWidth(entry.contentRect.width);
+      }
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const isSmallScreen = width < 400;
+  const margin = {
+    top: 20,
+    right: isSmallScreen ? 80 : 120,
+    bottom: 20,
+    left: isSmallScreen ? 80 : 150,
+  };
   const height = data.length * 60 + 40;
 
   const xScale = useMemo(
@@ -62,7 +84,7 @@ function BarChart({
         .scaleLinear()
         .domain([0, d3.max(data, (d) => d.value) || 0])
         .range([margin.left, width - margin.right]),
-    [data, width],
+    [data, width, margin.left, margin.right],
   );
 
   const yScale = useMemo(
@@ -72,53 +94,55 @@ function BarChart({
         .domain(data.map((d) => d.name))
         .range([margin.top, height - margin.bottom])
         .padding(0.2),
-    [data, height],
+    [data, height, margin.top, margin.bottom],
   );
 
   return (
-    <svg width={width} height={height} role="img" aria-label={ariaLabel}>
-      {data.map((item) => {
-        const y = yScale(item.name) ?? 0;
-        const barWidth = xScale(item.value) - margin.left;
-        const bandwidth = yScale.bandwidth();
+    <div ref={containerRef} className="w-full">
+      <svg width={width} height={height} role="img" aria-label={ariaLabel}>
+        {data.map((item) => {
+          const y = yScale(item.name) ?? 0;
+          const barWidth = Math.max(0, xScale(item.value) - margin.left);
+          const bandwidth = yScale.bandwidth();
 
-        return (
-          <g key={item.name}>
-            <rect
-              x={margin.left}
-              y={y}
-              width={barWidth}
-              height={bandwidth}
-              fill={item.color}
-              rx={4}
-            />
-            <text
-              x={margin.left - 10}
-              y={y + bandwidth / 2}
-              textAnchor="end"
-              dominantBaseline="middle"
-              fill="#374151"
-              fontWeight="600"
-              fontSize="14px"
-            >
-              {item.name}
-            </text>
-            <text
-              x={xScale(item.value) + 10}
-              y={y + bandwidth / 2}
-              textAnchor="start"
-              dominantBaseline="middle"
-              fill="#374151"
-              fontWeight="600"
-              fontSize="13px"
-            >
-              {valueFormatter(item.value)}
-              {unit}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+          return (
+            <g key={item.name}>
+              <rect
+                x={margin.left}
+                y={y}
+                width={barWidth}
+                height={bandwidth}
+                fill={item.color}
+                rx={4}
+              />
+              <text
+                x={margin.left - 10}
+                y={y + bandwidth / 2}
+                textAnchor="end"
+                dominantBaseline="middle"
+                fill="#374151"
+                fontWeight="600"
+                fontSize={isSmallScreen ? "12px" : "14px"}
+              >
+                {item.name}
+              </text>
+              <text
+                x={xScale(item.value) + 10}
+                y={y + bandwidth / 2}
+                textAnchor="start"
+                dominantBaseline="middle"
+                fill="#374151"
+                fontWeight="600"
+                fontSize={isSmallScreen ? "11px" : "13px"}
+              >
+                {valueFormatter(item.value)}
+                {unit}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
@@ -271,27 +295,23 @@ export function CountryCompareModal({
               <figcaption className="text-lg font-semibold mb-4 text-gray-900">
                 Population Comparison
               </figcaption>
-              <div className="flex justify-center overflow-x-auto">
-                <BarChart
-                  data={populationData}
-                  valueFormatter={formatStatistic}
-                  ariaLabel={`Bar chart comparing population: ${populationData.map((d) => `${d.name}: ${formatStatistic(d.value)}`).join(", ")}`}
-                />
-              </div>
+              <BarChart
+                data={populationData}
+                valueFormatter={formatStatistic}
+                ariaLabel={`Bar chart comparing population: ${populationData.map((d) => `${d.name}: ${formatStatistic(d.value)}`).join(", ")}`}
+              />
             </figure>
 
             <figure className="bg-gray-50 p-6 rounded-lg">
               <figcaption className="text-lg font-semibold mb-4 text-gray-900">
                 Area Comparison
               </figcaption>
-              <div className="flex justify-center overflow-x-auto">
-                <BarChart
-                  data={areaData}
-                  valueFormatter={formatStatistic}
-                  unit=" km²"
-                  ariaLabel={`Bar chart comparing area: ${areaData.map((d) => `${d.name}: ${formatStatistic(d.value)} km²`).join(", ")}`}
-                />
-              </div>
+              <BarChart
+                data={areaData}
+                valueFormatter={formatStatistic}
+                unit=" km²"
+                ariaLabel={`Bar chart comparing area: ${areaData.map((d) => `${d.name}: ${formatStatistic(d.value)} km²`).join(", ")}`}
+              />
             </figure>
           </div>
         </DialogBody>

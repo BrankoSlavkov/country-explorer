@@ -6,6 +6,7 @@ import { CountryCompareModal } from "~/components/country-compare-modal";
 import { CountryFilters } from "~/components/country-filters";
 import { CountryGrid } from "~/components/country-grid";
 import { CountryPagination } from "~/components/country-pagination";
+
 import { useCompare } from "~/contexts/compare-context";
 import { FilteredCountriesProvider } from "~/contexts/filtered-countries-context";
 import { useCountries } from "~/hooks/use-countries";
@@ -54,21 +55,17 @@ export function CountryCardList() {
       page={page}
       perPage={perPage}
     >
-      <div
-        className="sticky top-0 z-10 pb-6"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 30% 20%, #1a1a2e 0%, #0d0d1a 100%)",
-        }}
-      >
-        <div className="flex justify-center gap-4 mb-6 pt-6">
+      <div className="sticky top-0 z-10 pb-6 bg-app">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 pt-6 px-4">
           <Link
             to="/favorites"
-            className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20"
+            className="flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 text-sm sm:text-base"
             aria-label={`View favorites, ${favoritesCount} saved`}
           >
-            <Heart aria-hidden="true" className="w-5 h-5" />
-            Favorites ({favoritesCount})
+            <Heart aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden xs:inline">Favorites</span>
+            <span className="xs:hidden">{favoritesCount}</span>
+            <span className="hidden xs:inline">({favoritesCount})</span>
           </Link>
 
           <button
@@ -81,15 +78,16 @@ export function CountryCardList() {
                 : "Enter compare mode to select countries for comparison"
             }
             className={cn(
-              "flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all text-white",
-              {
-                "bg-blue-600 hover:bg-blue-700": compareMode,
-                "bg-blue-500 hover:bg-blue-600": !compareMode,
-              },
+              "flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium transition-all text-white text-sm sm:text-base",
+              compareMode
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-blue-500 hover:bg-blue-600",
             )}
           >
-            <GitCompare aria-hidden="true" className="w-5 h-5" />
-            {compareMode ? "Exit Compare Mode" : "Compare Mode"}
+            <GitCompare aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">
+              {compareMode ? "Exit Compare" : "Compare"}
+            </span>
             {compareMode && selectedCountries.length > 0 && (
               <span className="bg-white text-blue-600 px-2 py-0.5 rounded-full text-sm font-bold">
                 <span className="sr-only">
@@ -105,9 +103,11 @@ export function CountryCardList() {
               type="button"
               onClick={() => setShowCompareModal(true)}
               aria-label={`Compare ${selectedCountries.length} selected countries`}
-              className="px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all"
+              className="px-4 py-2 sm:px-6 sm:py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all text-sm sm:text-base"
             >
-              Compare Selected ({selectedCountries.length})
+              <span className="hidden sm:inline">Compare Selected</span>
+              <span className="sm:hidden">Compare</span>
+              <span> ({selectedCountries.length})</span>
             </button>
           )}
         </div>

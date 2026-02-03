@@ -19,13 +19,7 @@ function FavoritesPage() {
   }, [countries, favoritesList]);
 
   return (
-    <div
-      className="min-h-screen p-8"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle at 30% 20%, #1a1a2e 0%, #0d0d1a 100%)",
-      }}
-    >
+    <div className="min-h-screen p-8 bg-app">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <Link

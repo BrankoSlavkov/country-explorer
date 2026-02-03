@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { PAGINATION } from "./ui";
 
 export const SORT = {
   NAME_ASC: "name-asc",
@@ -72,8 +73,13 @@ export const POPULATION_FILTERS = [
 
 export const searchParamsSchema = z.object({
   search: z.string().optional(),
-  page: z.number().int().positive().optional().catch(1),
-  perPage: z.number().int().positive().optional().catch(20),
+  page: z.number().int().positive().optional().catch(PAGINATION.DEFAULT_PAGE),
+  perPage: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .catch(PAGINATION.DEFAULT_PER_PAGE),
   sortBy: z.enum(SORT_VALUES).optional().catch(DEFAULT_SORT),
   population: z
     .enum(POPULATION_FILTER_VALUES)

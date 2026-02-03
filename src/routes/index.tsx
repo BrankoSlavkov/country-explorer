@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
                 src="/favicon.png"
                 alt=""
                 aria-hidden="true"
-                className="w-10 h-10"
+                className="w-8 h-8 sm:w-10 sm:h-10"
               />
               Country Explorer
             </h1>

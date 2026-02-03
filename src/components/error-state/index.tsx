@@ -15,13 +15,7 @@ export function ErrorState({
   const { icon, title } = ERROR_VARIANTS[variant];
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen p-4"
-      style={{
-        backgroundImage:
-          "radial-gradient(50% 50% at 50% 50%, #1a1a2e 0%, #0d0d1a 100%)",
-      }}
-    >
+    <div className="flex items-center justify-center min-h-screen p-4 bg-app-centered">
       <div className="text-center max-w-md">
         <div className="text-8xl mb-6">{icon}</div>
         <h1 className="text-4xl font-bold text-white mb-4">{title}</h1>

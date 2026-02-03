@@ -8,6 +8,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
+import { PAGINATION } from "~/constants/ui";
 import { useFilteredCountries } from "~/contexts/filtered-countries-context";
 import { useCountrySearchParams } from "~/hooks/use-country-search-params";
 
@@ -26,9 +27,8 @@ export function CountryPagination() {
 
   const generatePageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
-    const maxVisible = 7;
 
-    if (totalPages <= maxVisible) {
+    if (totalPages <= PAGINATION.MAX_VISIBLE_PAGES) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
@@ -69,9 +69,9 @@ export function CountryPagination() {
   return (
     <nav
       aria-label="Pagination"
-      className="flex items-center justify-between max-w-7xl mx-auto mt-8 mb-8"
+      className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between max-w-7xl mx-auto mt-8 mb-8 px-4"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center sm:justify-start gap-2">
         <label htmlFor="items-per-page" className="text-white/80 text-sm">
           Show:
         </label>
@@ -82,15 +82,17 @@ export function CountryPagination() {
           aria-label="Number of countries per page"
           className="bg-white/10 text-white border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value={20}>20</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
+          {PAGINATION.PER_PAGE_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
         </select>
         <span className="text-white/80 text-sm">per page</span>
       </div>
 
       <Pagination>
-        <PaginationContent>
+        <PaginationContent className="flex-wrap justify-center">
           <PaginationItem>
             <PaginationPrevious
               onClick={() => handlePageChange(page - 1)}
@@ -100,7 +102,7 @@ export function CountryPagination() {
           </PaginationItem>
 
           {generatePageNumbers().map((pageNum, i) => (
-            <PaginationItem key={i}>
+            <PaginationItem key={i} className="hidden sm:block">
               {pageNum === "ellipsis" ? (
                 <PaginationEllipsis />
               ) : (
@@ -116,6 +118,12 @@ export function CountryPagination() {
             </PaginationItem>
           ))}
 
+          <PaginationItem className="sm:hidden">
+            <span className="text-white/80 text-sm px-2">
+              {page} / {totalPages}
+            </span>
+          </PaginationItem>
+
           <PaginationItem>
             <PaginationNext
               onClick={() => handlePageChange(page + 1)}
@@ -126,8 +134,11 @@ export function CountryPagination() {
         </PaginationContent>
       </Pagination>
 
-      <p className="text-white/80 text-sm" aria-live="polite">
-        Showing {startItem} to {endItem} of {totalCount} countries
+      <p
+        className="text-white/80 text-sm text-center sm:text-right"
+        aria-live="polite"
+      >
+        Showing {startItem}-{endItem} of {totalCount}
       </p>
     </nav>
   );
